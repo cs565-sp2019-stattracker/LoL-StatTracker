@@ -19,8 +19,15 @@
 
 
 /* Success, save it to a global var so can be used by other routes(?). Redirect to '/summoner' route (or maybe '/<summonerID>' ?), send request to LoL using API for some stats required for one of the features, 
-process data and send a text/html response. (Probably have a global var for each feature api request call so we can reuse data instead of making more API calls if its not feasible, 
-If making multiple redudant API calls is ok, then we don't need to */
+process data and send a text/html response. 
+(Probably have a global var for each feature api request call so we can reuse data instead of making more API calls if its not feasible, 
+If making multiple redudant API calls is ok, then we don't need to) */
+
+/* ALTERNATE TO having /summoner or other routes: Just have a Get but with SummonerID parameter ('/?summonerID=xxxxxxxxx') then: */
+/* use SummonerID as key/ index for JSON object containing the data, so other users who want to search the same summonerID can use the stored 'cache' instead of making extra
+API calls */
+/* So program flow will be: submit summonerID (Get with summonerID parameter), check if it exists in the storage keys, If not then perform API call, if API call fails do bootstrap alert popup
+if API call success just respond and display the stats */
 
 
 
