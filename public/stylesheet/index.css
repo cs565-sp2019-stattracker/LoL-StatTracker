@@ -1,0 +1,9 @@
+/* File containing css style to serve for index.html / root route ('/') */
+
+body{
+    background-image: url(../images/bg-default.jpg);
+    background-size: cover;
+}
+.search-bar{
+    width: 450px !important;
+}
