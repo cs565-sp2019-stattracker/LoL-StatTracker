@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
     {
         //Do API call (http get request)
 
+        /* Resource for the alert: https://stackoverflow.com/questions/52003021/node-js-express-request-fade-in-and-out-bootstrap-modal-on-request-error */
         //Callbacks, wrap in API call 
         //success callback
         res.status(200);
@@ -31,6 +32,7 @@ app.get('/', (req, res) => {
         res.write('<div class="alert alert-success alert-dismissible fade show">');
         res.write('<strong>Success</strong>Summoner Found - Stats should be displayed shortly.');
         res.write('<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+        //Display stats in table
         res.end();
 
         //failure callback, wrap 
