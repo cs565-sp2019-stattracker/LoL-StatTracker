@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
     if(req.query.summonerName)
     {
         //Do API call (http get request)
+        /* https://developer.riotgames.com/getting-started.html */
 
         /* Resource for the alert: https://stackoverflow.com/questions/52003021/node-js-express-request-fade-in-and-out-bootstrap-modal-on-request-error */
         //Callbacks, wrap in API call 
