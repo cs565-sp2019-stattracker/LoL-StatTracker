@@ -45,6 +45,8 @@ app.get('/', (req, res) => {
             }
             else
             {
+                var platformIndex = SERVICE_REGIONS.indexOf(req.query.regionName);
+                var apiRequest = "https://" + SERVICE_PLATFORM[platformIndex] + "api.riotgames.com/lol/";
                 //Make API call
                 //Do API call (http get request)
                 /* https://developer.riotgames.com/getting-started.html */
