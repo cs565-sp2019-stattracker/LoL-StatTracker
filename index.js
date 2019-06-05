@@ -13,43 +13,71 @@ const APIKEY = "<APIKEY HERE>" /* Note: Don't commit the APIKEY */
 var viewPath = __dirname + '/views';
 var publicPath = __dirname + '/public';
 var summonerData = {};          //Store user data
+var SERVICE_REGIONS = ["BR","EUNE","EUW","JP","KR","LAN","LAS","NA", "OCE", "TR", "RU", "PBE"]; //Valid service regions
+var SERVICE_PLATFORM = ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1", "oc1", "tr1", "ru", "pbe1"]; // Corresponding service platform for the api call
+var invalidSearch = {};  //Store SummonerName x ServiceRegion API request that returned an error, prevent useless future API call, objects inside should be "summonerName": ["region1", "region2", etc.]
+
 
 app.use(express.static(publicPath));
 
 app.get('/', (req, res) => {
-    //If the query param with summonerName key exists, do stuff
-    if(req.query.summonerName)
-    {
-        //Do API call (http get request)
-        /* https://developer.riotgames.com/getting-started.html */
-
-        /* Resource for the alert: https://stackoverflow.com/questions/52003021/node-js-express-request-fade-in-and-out-bootstrap-modal-on-request-error */
-        //Callbacks, wrap in API call 
-        //success callback
-        res.status(200);
-        res.set({
-            'Content-Type': 'text/html',
-        });
-        res.write('<div class="alert alert-success alert-dismissible fade show">');
-        res.write('<strong>Success</strong>Summoner Found - Stats should be displayed shortly.');
-        res.write('<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-        //Display stats in table
-        res.end();
-
-        //failure callback, wrap 
-        res.status(404);
-        res.set({
-            'Content-Type': 'text/html',
-        });
-        res.write('<div class="alert alert-danger alert-dismissible fade show">');
-        res.write('<strong>Error</strong>Summoner not found - Please enter another summoner name.');
-        res.write('<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-        res.end();
-    }
-    else //get with not summonerName param, send landing/ root/ home page
+    
+    //https://developer.riotgames.com/regional-endpoints.html
+    //Check if get parameters exist and Service region passed in is valid
+    if(req.query.regionName === undefined || req.query.summonerName === undefined || !SERVICE_REGIONS.includes(req.query.regionName))
     {
         res.sendFile(viewPath + "index.html");
     }
+    else
+    {
+        //Check if Summoner Name is valid, invalid -> Landing page
+        if(!/^[0-9\\p{L} _\\.]+$/.test(req.query.summonerName))
+        {
+            res.sendFile(viewPath + "index.html");
+        }
+        else
+        {
+            //Check if combination of summoner name and service region is already recorded in the invalidSearch object, 
+            //If so, we know API call using the values returned error in the past and we can skip the search
+            if(invalidSearch[req.query.summonerName] !== undefined && invalidSearch[req.query.summonerName].includes(req.query.regionName) )
+            {
+                res.sendFile(viewPath + "index.html");
+            }
+            else
+            {
+                //Make API call
+                //Do API call (http get request)
+                /* https://developer.riotgames.com/getting-started.html */
+
+                /* Resource for the alert: https://stackoverflow.com/questions/52003021/node-js-express-request-fade-in-and-out-bootstrap-modal-on-request-error */
+                //Callbacks, wrap in API call 
+                //success callback
+                res.status(200);
+                res.set({
+                    'Content-Type': 'text/html',
+                });
+                res.write('<div class="alert alert-success alert-dismissible fade show">');
+                res.write('<strong>Success</strong>Summoner Found - Stats should be displayed shortly.');
+                res.write('<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                //Display stats in table
+                res.end();
+
+                //failure callback, wrap 
+                res.status(404);
+                res.set({
+                    'Content-Type': 'text/html',
+                });
+                res.write('<div class="alert alert-danger alert-dismissible fade show">');
+                res.write('<strong>Error</strong>Summoner not found - Please enter another summoner name.');
+                res.write('<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                res.end();
+                //Add summonername x Service region in the invalid array
+            }
+        }
+
+
+    }
+
 });
 
 //Wildcard for non-existant pages
