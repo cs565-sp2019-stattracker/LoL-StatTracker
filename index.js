@@ -74,7 +74,12 @@ app.get('/', (req, res) => {
                 res.write('<strong>Error</strong>Summoner not found - Please enter another summoner name.');
                 res.write('<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                 res.end();
-                //Add summonername x Service region in the invalid array
+                //Part of error callback, Add summonername x Service region in the invalid array
+                if(!invalidSearch.includes(req.query.summonerName))
+                    invalidSearch[req.query.summonerName] = [req.query.regionName];
+                else
+                    invalidSearch[req.query.summonerName].push(req.query.regionName);
+
             }
         }
 
