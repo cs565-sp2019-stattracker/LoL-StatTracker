@@ -27,14 +27,14 @@ app.get('/', (req, res) => {
     //Check if get parameters exist and Service region passed in is valid
     if(req.query.regionName === undefined || req.query.summonerName === undefined || !SERVICE_REGIONS.includes(req.query.regionName))
     {
-        res.sendFile(viewPath + "index.html");
+        res.sendFile(viewPath + "\\index.html");
     }
     else
     {
         //Check if Summoner Name is valid, invalid -> Landing page
         if(!/^[0-9\\p{L} _\\.]+$/.test(req.query.summonerName))
         {
-            res.sendFile(viewPath + "index.html");
+            res.sendFile(viewPath + "\\index.html");
         }
         else
         {
@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
             //If so, we know API call using the values returned error in the past and we can skip the search
             if(invalidSearch[req.query.summonerName] !== undefined && invalidSearch[req.query.summonerName].includes(req.query.regionName) )
             {
-                res.sendFile(viewPath + "index.html");
+                res.sendFile(viewPath + "\\index.html");
             }
             else
             {
@@ -55,6 +55,7 @@ app.get('/', (req, res) => {
                 /* Resource for the alert: https://stackoverflow.com/questions/52003021/node-js-express-request-fade-in-and-out-bootstrap-modal-on-request-error */
                 //Callbacks, wrap in API call 
                 //success callback
+                /*
                 res.status(200);
                 res.set({
                     'Content-Type': 'text/html',
@@ -79,6 +80,7 @@ app.get('/', (req, res) => {
                     invalidSearch[req.query.summonerName] = [req.query.regionName];
                 else
                     invalidSearch[req.query.summonerName].push(req.query.regionName);
+                    */
 
             }
         }
@@ -90,7 +92,7 @@ app.get('/', (req, res) => {
 
 //Wildcard for non-existant pages
 app.get('*', (req, res) => {
-    res.sendFile(viewPath + "404.html");
+    res.sendFile(viewPath + "\\404.html");
 });
 
 const server = app.listen(8080, () => {
