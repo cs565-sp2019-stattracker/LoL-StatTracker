@@ -1,0 +1,22 @@
+{
+  "name": "lol-stattracker",
+  "version": "1.0.0",
+  "description": "App to search and display stats of a League of Legends summoner",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cs565-sp2019-stattracker/LoL-StatTracker.git"
+  },
+  "author": "Son Vu, Andre Mukhsia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cs565-sp2019-stattracker/LoL-StatTracker/issues"
+  },
+  "homepage": "https://github.com/cs565-sp2019-stattracker/LoL-StatTracker#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
