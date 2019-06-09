@@ -57,14 +57,7 @@ app.post('/frontendTest', (req, res) => {
         });
     }
     //Check if Summoner Name is valid
-    if(!/^[0-9\\p{L} _\\.]+$/.test(req.body.summoner))
-    {
-        console.log("Error, Illegal character in Summoner Name" + req.body.summoner)
-        return res.status(400).send({
-            message: 'Illegal character in Summoner Name'
-        });
-    }
-    else
+    if(/^[0-9A-Za-z _.]+$/.test(req.body.summoner))
     {
         
         var summonerStats = {
@@ -133,6 +126,13 @@ app.post('/frontendTest', (req, res) => {
         }
         */
         res.send(summonerStats);
+    }
+    else
+    {
+        console.log("Error, Illegal character in Summoner Name: " + req.body.summoner)
+        return res.status(400).send({
+            message: 'Illegal character in Summoner Name'
+        });
     }
 });
 
