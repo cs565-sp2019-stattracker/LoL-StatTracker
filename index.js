@@ -18,7 +18,6 @@ const SERVICE_PLATFORM = ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1
 
 var viewPath = __dirname + '/views';
 var publicPath = __dirname + '/public';
-var summonerData = {};          //Store user data
 var summonerIDArr = {};  //Store Summonername - SummonerID
 var summonerData = {};   //Store user data
 var invalidSearch = {};  //Store SummonerName x ServiceRegion API request that returned an error, prevent useless future API call, objects inside should be "summonerName": ["region1", "region2", etc.]
@@ -119,6 +118,12 @@ var getLeagueEntries = function (apiBaseURI, summonerID) {
     var reqURI = apiBaseURI + "league/v4/entries/by-summoner/{encryptedSummonerId}" + summonerID;
 }
 
+// Champion Mastery, first four?
+var getChampionMastery = function(apiBaseURI, summonerID) {
+    var reqURI = "champion-mastery/v4/champion-masteries/by-summoner/" + summonerID;
+}
+
+//Summoner's win/loss for each Champion?
 
 /* Stats to display according to features requirement; Reminder: 
 -Summoner Win/Loss ratio (maybe with win, loss too) 
@@ -126,7 +131,4 @@ var getLeagueEntries = function (apiBaseURI, summonerID) {
 -Summoner's current rank
 -Summoner's win/loss for each Champion
 -Summoner's Champion Mastery (lots of data to display, maybe narrow it down more(?))
-
-First 4 might be able to be displayed in the summoner stat page
-Champion Mastery might need its own request/ response to display
 */
