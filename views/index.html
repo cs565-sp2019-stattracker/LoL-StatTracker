@@ -37,8 +37,8 @@
 						<option value="ru">RU</option>
 						<option value="pbe">PBE</option>
 					</select>
-					<input class= "form-control search-bar" type="text" placeholder="Summoner Name" aria-label="Search">
-					<button class="btn btn-primary btn-md mx-2" type="submit">Search</button>
+					<input class= "form-control search-bar" type="text" placeholder="Summoner Name" aria-label="Search" id="summoner">
+					<button class="btn btn-primary btn-md mx-2" type="submit" id="submit">Search</button>
 				</div>
 			</div>
 			<div class ="footer">
@@ -51,12 +51,6 @@
 								<a href="https://github.com/cs565-sp2019-stattracker/LoL-StatTracker">
 									<i class="fa fa-github fa-md" id="icon"></i>
 								</a>
-								<!--<a href="https://www.linkedin.com/in/svuhoang/">
-									<i class="fa fa-linkedin-square fa-md" id="icon"></i>
-								</a>
-								<a href="mailto:svuhoang@gmail.com">
-									<i class="fa fa-envelope-open-o fa-md" aria-hidden="true"></i>
-								</a>-->
 							</div>
 					</div>
 			</div>
@@ -64,5 +58,37 @@
 	</body>
 </html>
 
+<script type ="text/javascript">
 
-<!-- Maybe a page with just a text input in the middle and some sort of submit button (text input size should be strict if SummonerID length is strict) -->
+	var showInfo = function(data) {
+	};
+
+	var showError = function(data) {
+	};
+
+	$('#submit').on('click', function(event){
+		console.log("search button clicked event");
+		$.ajax({
+			'url' : '/submit',
+			'type' : 'POST',
+			'data' : { region: $('#reg').val(), summoner: $('#summoner').val() },
+			'success' : showInfo,
+			'error' : showError
+		});
+		if (results == false){
+			showError();
+		}
+		results = false;
+	});
+
+	$('#summoner').on('keyup', function(event){
+		console.log('keyup event');
+		if(event.which === 13){
+			('#submit').click();
+		}
+
+	});
+
+</script>
+
+
