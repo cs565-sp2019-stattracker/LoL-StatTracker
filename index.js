@@ -43,7 +43,7 @@ app.get('/test', (req, res) => {
     res.send("Reached end of test route, check serverside console log");
 });
 
-app.get('/frontendTest', (req, res) => {
+app.post('/frontendTest', (req, res) => {
     console.log(req.body.summoner);
     console.log(req.body.region);
     if(!SERVICE_REGIONS.includes(req.body.region))
