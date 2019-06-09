@@ -69,22 +69,22 @@
 	$('#submit').on('click', function(event){
 		console.log("search button clicked event");
 		$.ajax({
-			'url' : '/submit',
+			'url' : '/frontendTest',
 			'type' : 'POST',
 			'data' : { region: $('#reg').val(), summoner: $('#summoner').val() },
 			'success' : showInfo,
 			'error' : showError
 		});
-		if (results == false){
+		/*if (results == false){
 			showError();
 		}
-		results = false;
+		results = false; */
 	});
 
 	$('#summoner').on('keyup', function(event){
 		console.log('keyup event');
 		if(event.which === 13){
-			('#submit').click();
+			$('#submit').click();
 		}
 
 	});
