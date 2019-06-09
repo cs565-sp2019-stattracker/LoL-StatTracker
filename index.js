@@ -97,7 +97,10 @@ app.post('/submit', (req, res) => {
                             });
                         }
                     }
-                );
+                ), 
+                function(error) {
+                    console.log(err);
+                };
 
                 //getLeagueEntries
                 getLeagueEntries(apiRequest, summonerObj.id).then(
@@ -114,7 +117,10 @@ app.post('/submit', (req, res) => {
                             });
                         }
                     }
-                );
+                ), 
+                function(error) {
+                    console.log(err);
+                };
 
                 //Not sure how to get win/loss for each champion again?
                 //After thinking, I guess it is from calling matchlist then individual matches (but rate limit on individual matches per 10 secs...)
@@ -165,7 +171,10 @@ app.post('/submit', (req, res) => {
                             );
                         }
                     }
-                );
+                ), 
+                function(error) {
+                    console.log(err);
+                };
                 */
 
                 //Send object with gathered/ compiled summoner data to Frontend
