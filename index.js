@@ -19,6 +19,8 @@ const SERVICE_PLATFORM = ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1
 var viewPath = __dirname + '/views';
 var publicPath = __dirname + '/public';
 var summonerData = {};          //Store user data
+var summonerIDArr = {};  //Store Summonername - SummonerID
+var summonerData = {};   //Store user data
 var invalidSearch = {};  //Store SummonerName x ServiceRegion API request that returned an error, prevent useless future API call, objects inside should be "summonerName": ["region1", "region2", etc.]
 
 
@@ -106,11 +108,17 @@ const server = app.listen(8080, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
 
-/* ALTERNATE TO having /summoner or other routes: Just have a Get but with SummonerID parameter ('/?summonerID=xxxxxxxxx') then: */
-/* use SummonerName as key/ index for JSON object containing the data, so other users who want to search the same summonerID can use the stored 'cache' instead of making extra
-API calls */
-/* So program flow will be: submit summonerID (Get with summonerID parameter), check if it exists in the storage keys, If not then perform API call, if API call fails do bootstrap alert popup
-if API call success just respond and display the stats */
+//Get encrypted summoner ID used for further API calls
+var getSummonerByName = function(apiBaseURI, summonerName) {
+    var reqURI = apiBaseURI + "summoner/v4/summoners/by-name/" + summonerName;
+}
+
+// Win/Loss ratio
+// Win streak
+var getLeagueEntries = function (apiBaseURI, summonerID) {
+    var reqURI = apiBaseURI + "league/v4/entries/by-summoner/{encryptedSummonerId}" + summonerID;
+}
+
 
 /* Stats to display according to features requirement; Reminder: 
 -Summoner Win/Loss ratio (maybe with win, loss too) 
