@@ -12,7 +12,7 @@ var http = require('http'); //For making http requests using LoL API
 var request = require('request');
 const app = express();
 
-const APIKEY = "<APIKEY HERE>" /* Note: Don't commit the APIKEY */
+const APIKEY = "<Replace with API KEY>" /* Note: Don't commit the APIKEY */
 const SERVICE_REGIONS = ["BR","EUNE","EUW","JP","KR","LAN","LAS","NA", "OCE", "TR", "RU", "PBE"]; //Valid service regions
 const SERVICE_PLATFORM = ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1", "oc1", "tr1", "ru", "pbe1"]; // Corresponding service platform for the api call
 
@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
     res.sendFile(viewPath + "/index.html");
 });
 
-//Testing route
+//Test route
 app.get('/test', (req, res) => {
     const testSummonerName = "eliptic";
     var apiRequest = "https://na1.api.riotgames.com/lol/";
@@ -39,24 +39,26 @@ app.get('/test', (req, res) => {
             console.log(data);
         }
     );
+    res.send("Reached end of test route, check serverside console log");
 });
+
 
 //Post request, submit button - still do checks
 app.post('/submit', (req, res) => {
     //https://developer.riotgames.com/regional-endpoints.html
     //Check if get parameters exist and Service region passed in is valid
-    if(!SERVICE_REGIONS.includes(req.query.regionName))
+    if(!SERVICE_REGIONS.includes(req.body.regionName))
     {
         //https://stackoverflow.com/questions/35864088/how-to-send-error-http-response-in-express-node-js/35865605
-        console.log("Error, Illegal region name" + req.query.regionName)
+        console.log("Error, Illegal region name" + req.body.regionName)
         return res.status(400).send({
             message: 'Illegal region name'
         });
     }
-    //Check if Summoner Name is valid, invalid -> Landing page
-    if(!/^[0-9\\p{L} _\\.]+$/.test(req.query.summonerName))
+    //Check if Summoner Name is valid
+    if(!/^[0-9\\p{L} _\\.]+$/.test(req.body.summonerName))
     {
-        console.log("Error, Illegal character in Summoner Name" + req.query.summonerName)
+        console.log("Error, Illegal character in Summoner Name" + req.body.summonerName)
         return res.status(400).send({
             message: 'Illegal character in Summoner Name'
         });
@@ -65,14 +67,39 @@ app.post('/submit', (req, res) => {
     {
         //Check if combination of summoner name and service region is already recorded in the invalidSearch object, 
         //If so, we know API call using the values returned error in the past and we can skip the search
-        if(invalidSearch[req.query.summonerName] !== undefined && invalidSearch[req.query.summonerName].includes(req.query.regionName) )
+        if(invalidSearch[req.body.summonerName] !== undefined && invalidSearch[req.body.summonerName].includes(req.body.regionName) )
         {
             return res.status(400).send({
                 message: 'Summoner was not found in the region specified'
             });
         }
-        var platformIndex = SERVICE_REGIONS.indexOf(req.query.regionName);
+        var platformIndex = SERVICE_REGIONS.indexOf(req.body.regionName);
         var apiRequest = "https://" + SERVICE_PLATFORM[platformIndex] + ".api.riotgames.com/lol/";
+        var summonerStats = {}; //Object that will contain the necessary stats to be displayed
+
+        getSummonerByName(apiRequest, req.body.summonerName).then(
+            function(data) {
+                console.log(data);
+                summonerStats[SummonerLevel] = data.summonerLevel;  //For display
+                summonerStats[summonerID] = data.id;                //Encrypted, for other API call
+                summonerStats[accountId] = data.accountId;          //Encrypted, for other API call
+
+                //getChampionMastery
+                getChampionMastery(apiRequest, req.body.summonerName).then(
+
+                );
+
+                //getLeagueEntries
+                //Not sure how to get win/loss for each champion again??
+
+                //Send object with gathered/ compiled summoner data to Frontend
+                res.send(summonerStats);
+            }
+
+
+        ), function(err) {
+            console.log(err);
+        };
     }
 });
 
@@ -114,26 +141,57 @@ var getSummonerByName = function(apiBaseURI, summonerName) {
     return promise;
 }
 
-
 // Win/Loss ratio
 // Win streak
 var getLeagueEntries = function (apiBaseURI, summonerID) {
-    var reqURI = apiBaseURI + "league/v4/entries/by-summoner/{encryptedSummonerId}" + summonerID  + "?api_key=" + APIKEY;
+    console.log("executing getLeagueEntries");
+    var reqURI = apiBaseURI + "league/v4/entries/by-summoner/" + summonerID  + "?api_key=" + APIKEY;
 
     var options = {
-        url: reqURI,
+        url: reqURI + APIKEY,
         json: true
     };
+
+    var promise = new Promise(function(resolve, reject) {
+        request.get(options, function(error, response, body){
+            resolve (body);
+        })
+    });  
+
+    promise.then(function(data) {
+        return data; 
+    }, function(err) {
+        console.log(err); 
+        return [];
+    });
+
+    return promise;
 }
 
-// Champion Mastery, first four?
+// Champion Mastery
 var getChampionMastery = function(apiBaseURI, summonerID) {
+    console.log("executing getChampionMastery");
     var reqURI = "champion-mastery/v4/champion-masteries/by-summoner/" + summonerID  + "?api_key=" + APIKEY;
 
     var options = {
-        url: reqURI,
+        url: reqURI + APIKEY,
         json: true
     };
+
+    var promise = new Promise(function(resolve, reject) {
+        request.get(options, function(error, response, body){
+            resolve (body);
+        })
+    });  
+
+    promise.then(function(data) {
+        return data; 
+    }, function(err) {
+        console.log(err); 
+        return [];
+    });
+
+    return promise;
 }
 
 //Summoner's win/loss for each Champion?
