@@ -33,9 +33,12 @@ app.get('/', (req, res) => {
 //Testing route
 app.get('/test', (req, res) => {
     const testSummonerName = "eliptic";
-    const testServicePlatform = "na1";
-    var apiRequest = "https://" + SERVICE_PLATFORM[platformIndex] + "api.riotgames.com/lol/";
-    getSummonerByName
+    var apiRequest = "https://na1.api.riotgames.com/lol/";
+    getSummonerByName(apiRequest, testSummonerName).then(
+        function(data) {
+            console.log(data);
+        }
+    );
 });
 
 //Post request, submit button - still do checks
@@ -69,6 +72,7 @@ app.post('/submit', (req, res) => {
             });
         }
         var platformIndex = SERVICE_REGIONS.indexOf(req.query.regionName);
+        var apiRequest = "https://" + SERVICE_PLATFORM[platformIndex] + ".api.riotgames.com/lol/";
     }
 });
 
@@ -86,10 +90,11 @@ const server = app.listen(8080, () => {
 
 //Get encrypted summoner ID used for further API calls
 var getSummonerByName = function(apiBaseURI, summonerName) {
-    var reqURI = apiBaseURI + "summoner/v4/summoners/by-name/" + summonerName + "?api_key=" + APIKEY;
-
+    console.log("executing getSummonerByName");
+    var reqURI = apiBaseURI + "summoner/v4/summoners/by-name/" + summonerName + "?api_key=";
+    console.log("ReqURI: " + reqURI);
     var options = {
-        url: reqURI,
+        url: reqURI + APIKEY,
         json: true
     };
 
@@ -108,6 +113,7 @@ var getSummonerByName = function(apiBaseURI, summonerName) {
 
     return promise;
 }
+
 
 // Win/Loss ratio
 // Win streak
