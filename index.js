@@ -51,10 +51,8 @@ app.post('/frontendTest', (req, res) => {
     if(!SERVICE_REGIONS.includes(req.body.region))
     {
         //https://stackoverflow.com/questions/35864088/how-to-send-error-http-response-in-express-node-js/35865605
-        console.log("Error, Illegal region name" + req.body.summoner)
-        return res.status(400).send({
-            message: 'Illegal region name'
-        });
+        console.log("Error, Illegal region name" + req.body.summoner);
+        return res.status(400).json({ error: 'Illegal region name' });
     }
     //Check if Summoner Name is valid
     if(/^[0-9A-Za-z _.]+$/.test(req.body.summoner))
@@ -129,9 +127,7 @@ app.post('/frontendTest', (req, res) => {
     else
     {
         console.log("Error, Illegal character in Summoner Name: " + req.body.summoner)
-        return res.status(400).send({
-            message: 'Illegal character in Summoner Name'
-        });
+        return res.status(400).json({ error: 'Illegal character in Summoner Name' });
     }
 });
 
@@ -144,9 +140,7 @@ app.post('/submit', (req, res) => {
     {
         //https://stackoverflow.com/questions/35864088/how-to-send-error-http-response-in-express-node-js/35865605
         console.log("Error, Illegal region name" + req.body.summoner)
-        return res.status(400).send({
-            message: 'Illegal region name'
-        });
+        return res.status(400).json({ error: 'Illegal region name' });
     }
     //Check if Summoner Name is valid
     if(/^[0-9A-Za-z _.]+$/.test(req.body.summoner))
@@ -155,9 +149,7 @@ app.post('/submit', (req, res) => {
         //If so, we know API call using the values returned error in the past and we can skip the search
         if(invalidSearch[req.body.summoner] !== undefined && invalidSearch[req.body.summoner].includes(req.body.region) )
         {
-            return res.status(400).send({
-                message: 'Summoner was not found in the region specified'
-            });
+            return res.status(400).json({ error: 'Summoner not found on region specified' });
         }
         var platformIndex = SERVICE_REGIONS.indexOf(req.body.region);
         var apiRequest = "https://" + SERVICE_PLATFORM[platformIndex] + ".api.riotgames.com/lol/";
@@ -272,9 +264,7 @@ app.post('/submit', (req, res) => {
     else
     {
         console.log("Error, Illegal character in Summoner Name" + req.body.summoner)
-        return res.status(400).send({
-            message: 'Illegal character in Summoner Name'
-        });
+        return res.status(400).json({ error: 'Illegal character in Summoner Name'});
     }
 
 });
