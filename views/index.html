@@ -6,37 +6,59 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" type="text/css" href="../public/stylesheet/index.css">
+		<!-- <link rel="stylesheet" type="text/css" href="../public/stylesheet/index.css"> -->
 		<link rel="stylesheet" type="text/css" href="/stylesheet/index.css">
-		<!--<link rel="stylesheet" type="text/css" href="../public/stylesheet/index.css"> -->
-
-		<!--<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css" />
-		<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" /> 
-		<script type="text/javascript" src="/bootstrap/css/bootstrap.min.css"></script> 
-		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/css/mdb.min.css" /> -->
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/js/mdb.min.js"></script> 
-		<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script> -->
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/css/bootstrap.min.css" />
-
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script> <!-- Jquery -->
 		<style type="text/css">
 		</style>
   	</head>
 	<body>
 		<main>
-			<div class="container-fluid">
+			<div class="container-fluid wrapper">
 				<div class="title">
-					<h1>LoL Tracker</h1>
+					<h1>LoL StaTrak</h1>
 				</div>
 				<div class="form-inline">
+					<select class="custom-select mx-md-2 region" id="reg">
+						<option value="br">BR</option>
+						<option value="eune">EUNE</option>
+						<option value="euw">EUW</option>
+						<option value="jp">JP</option>
+						<option value="kr">KR</option>
+						<option value="lan">LAN</option>
+						<option value="las">LAS</option>
+						<option value="us">US</option>
+						<option value="oce">OCE</option>
+						<option value="tr">TR</option>
+						<option value="ru">RU</option>
+						<option value="pbe">PBE</option>
+					</select>
 					<input class= "form-control search-bar" type="text" placeholder="Summoner Name" aria-label="Search">
 					<button class="btn btn-primary btn-md mx-2" type="submit">Search</button>
 				</div>
-				<div class="creators">
-					<h3 class="names">Created By Andre Mukhsia and Son Vu</h3>
-				</div>
+			</div>
+			<div class ="footer">
+					<div class="container">
+						<div class="d-flex justify-content-between">
+							<div>
+								&copy; 2019 Copyright Son Vu and Andre Mukhsia
+							</div>
+							<div>
+								<a href="https://github.com/cs565-sp2019-stattracker/LoL-StatTracker">
+									<i class="fa fa-github fa-md" id="icon"></i>
+								</a>
+								<!--<a href="https://www.linkedin.com/in/svuhoang/">
+									<i class="fa fa-linkedin-square fa-md" id="icon"></i>
+								</a>
+								<a href="mailto:svuhoang@gmail.com">
+									<i class="fa fa-envelope-open-o fa-md" aria-hidden="true"></i>
+								</a>-->
+							</div>
+					</div>
 			</div>
 		</main>
 	</body>
