@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
 });
 
 //Test route
-app.get('/test', (req, res) => {
+app.get('/testAPIcall', (req, res) => {
     const testSummonerName = "eliptic";
     var apiRequest = "https://na1.api.riotgames.com/lol/";
     getSummonerByName(apiRequest, testSummonerName).then(
@@ -59,7 +59,6 @@ app.post('/frontendTest', (req, res) => {
     //Check if Summoner Name is valid
     if(/^[0-9A-Za-z _.]+$/.test(req.body.summoner))
     {
-        
         var summonerStats = {
             'summonerLevel': 10,
             'summonerId': 'someId',
@@ -68,8 +67,8 @@ app.post('/frontendTest', (req, res) => {
         summonerStats['championMasteryList'] = [];
         for(var i = 0; i < 3; i = i + 1) {
             summonerStats.championMasteryList.push({
-                'championId': "ascv341564",
-                'championLevel': 100,
+                'championId': i+14,
+                'championLevel': 100-i,
                 'championPointsUntilNextLevel': 0
             });
         }
@@ -80,7 +79,7 @@ app.post('/frontendTest', (req, res) => {
                 'leagueId': "someLeague",
                 'wins': i+2,
                 'loss': 4,
-                'hotStreak': i-2,
+                'hotStreak': true,
                 'rank': 'Platinum 4',
                 'leaguePoints': 1000
             });
@@ -104,21 +103,21 @@ app.post('/frontendTest', (req, res) => {
             'summonerId': 'int',
             'accountId': 'int',
             'championMasteryList': [
-                'championId': int,
+                'championId': long,
                 'championLevel': int,
-                'championPointsUntilNextLevel': int
+                'championPointsUntilNextLevel': long
             ],
             'leagueEntryList': [
-                'leagueId': int,
+                'leagueId': string,
                 'wins': int,
                 'loss': int,
-                'hotStreak': int,
-                'rank': int,
+                'hotStreak': bool,
+                'rank': string,
                 'leaguePoints': int
             ],
             'matches': [
-                'matchId': int,
-                'championId': int,
+                'matchId': long,
+                'championId': long,
                 'kills': int,
                 'deaths': int,
                 'win': bool
@@ -144,20 +143,13 @@ app.post('/submit', (req, res) => {
     if(!SERVICE_REGIONS.includes(req.body.region))
     {
         //https://stackoverflow.com/questions/35864088/how-to-send-error-http-response-in-express-node-js/35865605
-        console.log("Error, Illegal region name" + req.body.region)
+        console.log("Error, Illegal region name" + req.body.summoner)
         return res.status(400).send({
             message: 'Illegal region name'
         });
     }
     //Check if Summoner Name is valid
-    if(!/^[0-9\\p{L} _\\.]+$/.test(req.body.summoner))
-    {
-        console.log("Error, Illegal character in Summoner Name" + req.body.summoner)
-        return res.status(400).send({
-            message: 'Illegal character in Summoner Name'
-        });
-    }
-    else
+    if(/^[0-9A-Za-z _.]+$/.test(req.body.summoner))
     {
         //Check if combination of summoner name and service region is already recorded in the invalidSearch object, 
         //If so, we know API call using the values returned error in the past and we can skip the search
@@ -173,7 +165,7 @@ app.post('/submit', (req, res) => {
 
         getSummonerByName(apiRequest, req.body.summoner).then(
             function(summonerObj) {
-                console.log(summonerObj);
+                console.log("Received: " + summonerObj);
                 summonerStats['SummonerLevel'] = summonerObj.summonerLevel;  //For display
                 summonerStats['summonerId'] = summonerObj.id;                //Encrypted, for other API call
                 summonerStats['accountId'] = summonerObj.accountId;          //Encrypted, for other API call
@@ -181,7 +173,7 @@ app.post('/submit', (req, res) => {
                 //getChampionMastery
                 getChampionMastery(apiRequest, summonerObj.id).then(
                     function(masteryObjList) {
-                        summonerStats.championMasteryList = [];
+                        summonerStats['championMasteryList'] = [];
                         for(var masteryObj in masteryObjList){
                             summonerStats.championMasteryList.push({
                                 'championId': masteryObj.championId,
@@ -198,7 +190,7 @@ app.post('/submit', (req, res) => {
                 //getLeagueEntries
                 getLeagueEntries(apiRequest, summonerObj.id).then(
                     function(leagueEntriesSet) {
-                        summonerStats.leagueEntryList = [];
+                        summonerStats['leagueEntryList'] = [];
                         for(var entry in leagueEntriesSet) {
                             summonerStats.leagueEntryList.push({
                                 'leagueId': entry.leagueId,
@@ -215,6 +207,7 @@ app.post('/submit', (req, res) => {
                     console.log(err);
                 };
 
+                /* Uncomment if we need match data
                 //Not sure how to get win/loss for each champion again?
                 //After thinking, I guess it is from calling matchlist then individual matches (but rate limit on individual matches per 10 secs...)
                 //This function gets a list of matches, each with a matchId, a championId, kills, deaths, win(True/False)
@@ -267,6 +260,7 @@ app.post('/submit', (req, res) => {
                 function(error) {
                     console.log(err);
                 };
+                */
 
                 //Send object with gathered/ compiled summoner data to Frontend
                 res.send(summonerStats);
@@ -275,6 +269,14 @@ app.post('/submit', (req, res) => {
             console.log(err);
         };
     }
+    else
+    {
+        console.log("Error, Illegal character in Summoner Name" + req.body.summoner)
+        return res.status(400).send({
+            message: 'Illegal character in Summoner Name'
+        });
+    }
+
 });
 
 //Wildcard for non-existant pages
@@ -419,6 +421,7 @@ var getMatch = function(apiBaseURI, matchId) {
 
     return promise;
 }
+
 /* Stats to display according to features requirement; Reminder: 
 -Summoner Win/Loss ratio (maybe with win, loss too) 
 -Summoner's current win streak
