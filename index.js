@@ -15,6 +15,7 @@ const app = express();
 const APIKEY = "<Replace with API KEY>" /* Note: Don't commit the APIKEY */
 const SERVICE_REGIONS = ["BR","EUNE","EUW","JP","KR","LAN","LAS","NA", "OCE", "TR", "RU", "PBE"]; //Valid service regions
 const SERVICE_PLATFORM = ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1", "oc1", "tr1", "ru", "pbe1"]; // Corresponding service platform for the api call
+const CURRENT_SEASON = 9    //Current season for filtering matchlist api request
 
 var viewPath = __dirname + '/views';
 var publicPath = __dirname + '/public';
@@ -113,16 +114,63 @@ app.post('/submit', (req, res) => {
                             });
                         }
                     }
-                )
+                );
 
-                //Not sure how to get win/loss for each champion again??
+                //Not sure how to get win/loss for each champion again?
                 //After thinking, I guess it is from calling matchlist then individual matches (but rate limit on individual matches per 10 secs...)
+                /*
+                //This function gets a list of matches, each with a matchId, a championId, kills, deaths, win(True/False)
+                getMatchList(apiRequest, summonerObj.accountId).then(
+                    function(matchList) {
+                        summonerStats.matches = [];
+                        for(var matchId in matchList){
+                            getMatch(apiRequest, matchId).then(
+                                function(match) {
+                                    var participantId = null;
+                                    //participantIdentityDTO, get the participantId of the summoner for the match
+                                    for(participant in match.participantIdentities) {
+                                        if(participant.player.summonerId === summonerObj.id) {
+                                            participantId = participant.participantId;
+                                        }
+                                    }
+
+                                    if(participantId !== null)
+                                    {
+                                        var championId = -1;
+                                        var kills = -1;
+                                        var deaths = -1;
+                                        var win = null
+                                        //participantDTO, get the championId, win(True/ False) and k/d
+                                        for(player in match.participants) {
+                                            if(participantId === player.participantId) {
+                                                championId = player.championId;
+                                                for(stats in player.stats){
+                                                    kills = stats.kills;
+                                                    deaths = stats.deaths;
+                                                    win = stats.win;
+                                                }
+                                            }
+                                        }
+
+                                        //Push record
+                                        summonerStats.matches.push({
+                                            'matchId': matchId,
+                                            'championId': championId,
+                                            'kills': kills,
+                                            'deaths': deaths,
+                                            'win': win
+                                        });
+                                    }
+                                }
+                            );
+                        }
+                    }
+                );
+                */
 
                 //Send object with gathered/ compiled summoner data to Frontend
                 res.send(summonerStats);
             }
-
-
         ), function(err) {
             console.log(err);
         };
@@ -169,9 +217,9 @@ var getSummonerByName = function(apiBaseURI, summonerName) {
 
 // Win/Loss ratio
 // Win streak
-var getLeagueEntries = function (apiBaseURI, summonerID) {
+var getLeagueEntries = function (apiBaseURI, summonerId) {
     console.log("executing getLeagueEntries");
-    var reqURI = apiBaseURI + "league/v4/entries/by-summoner/" + summonerID  + "?api_key=" + APIKEY;
+    var reqURI = apiBaseURI + "league/v4/entries/by-summoner/" + summonerId  + "?api_key=" + APIKEY;
 
     var options = {
         url: reqURI + APIKEY,
@@ -195,9 +243,9 @@ var getLeagueEntries = function (apiBaseURI, summonerID) {
 }
 
 // Champion Mastery
-var getChampionMastery = function(apiBaseURI, summonerID) {
+var getChampionMastery = function(apiBaseURI, summonerId) {
     console.log("executing getChampionMastery");
-    var reqURI = "champion-mastery/v4/champion-masteries/by-summoner/" + summonerID  + "?api_key=" + APIKEY;
+    var reqURI = apiBaseURI + "champion-mastery/v4/champion-masteries/by-summoner/" + summonerId  + "?api_key=" + APIKEY;
 
     var options = {
         url: reqURI + APIKEY,
@@ -220,8 +268,57 @@ var getChampionMastery = function(apiBaseURI, summonerID) {
     return promise;
 }
 
-//Summoner's win/loss for each Champion?
+//Summoner's win/loss for each Champion, get matchlist, get matches
+//Get matchlist for current season (depends on constant)
+var getMatchList = function(apiBaseURI, accountId) {
+    console.log("executing getChampionMastery");
+    var reqURI = apiBaseURI + "match/v4/matchlists/by-account/" + accountId  + "?api_key=" + APIKEY + "&season=[" + CURRENT_SEASON + "]";
 
+    var options = {
+        url: reqURI + APIKEY,
+        json: true
+    };
+
+    var promise = new Promise(function(resolve, reject) {
+        request.get(options, function(error, response, body){
+            resolve (body);
+        })
+    });  
+
+    promise.then(function(data) {
+        return data; 
+    }, function(err) {
+        console.log(err); 
+        return [];
+    });
+
+    return promise;
+}
+
+//Get a match
+var getMatch = function(apiBaseURI, matchId) {
+    var reqURI = apiBaseURI + "match/v4/matches/" + matchId + "?api_key=" + APIKEY;
+
+    var options = {
+        url: reqURI + APIKEY,
+        json: true
+    };
+
+    var promise = new Promise(function(resolve, reject) {
+        request.get(options, function(error, response, body){
+            resolve (body);
+        })
+    });  
+
+    promise.then(function(data) {
+        return data; 
+    }, function(err) {
+        console.log(err); 
+        return [];
+    });
+
+    return promise;
+}
 /* Stats to display according to features requirement; Reminder: 
 -Summoner Win/Loss ratio (maybe with win, loss too) 
 -Summoner's current win streak
