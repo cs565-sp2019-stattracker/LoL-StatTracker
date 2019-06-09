@@ -78,19 +78,45 @@ app.post('/submit', (req, res) => {
         var summonerStats = {}; //Object that will contain the necessary stats to be displayed
 
         getSummonerByName(apiRequest, req.body.summonerName).then(
-            function(data) {
-                console.log(data);
-                summonerStats[SummonerLevel] = data.summonerLevel;  //For display
-                summonerStats[summonerID] = data.id;                //Encrypted, for other API call
-                summonerStats[accountId] = data.accountId;          //Encrypted, for other API call
+            function(summonerObj) {
+                console.log(summonerObj);
+                summonerStats[SummonerLevel] = summonerObj.summonerLevel;  //For display
+                summonerStats[summonerID] = summonerObj.id;                //Encrypted, for other API call
+                summonerStats[accountId] = summonerObj.accountId;          //Encrypted, for other API call
 
                 //getChampionMastery
-                getChampionMastery(apiRequest, req.body.summonerName).then(
-
+                getChampionMastery(apiRequest, summonerObj.id).then(
+                    function(masteryObjList) {
+                        summonerStats.championMasteryList = [];
+                        for(var masteryObj in masteryObjList){
+                            summonerStats.mastery.push({
+                                'championId': masteryObj.championId,
+                                'championLevel': masteryObj.championLevel,
+                                'championPointsUntilNextLevel': masteryObj.championPointsUntilNextLevel
+                            });
+                        }
+                    }
                 );
 
                 //getLeagueEntries
+                getLeagueEntries(apiRequest, summonerObj.id).then(
+                    function(leagueEntriesSet) {
+                        summonerStats.leagueEntryList = [];
+                        for(var entry in leagueEntriesSet) {
+                            summonerStats.leagueEntryList.push({
+                                'leagueId': entry.leagueId,
+                                'wins': entry.wins,
+                                'loss': entry.losses,
+                                'hotStreak': entry.hotStreak,
+                                'rank': entry.rank,
+                                'leaguePoints': entry.leaguePoints
+                            });
+                        }
+                    }
+                )
+
                 //Not sure how to get win/loss for each champion again??
+                //After thinking, I guess it is from calling matchlist then individual matches (but rate limit on individual matches per 10 secs...)
 
                 //Send object with gathered/ compiled summoner data to Frontend
                 res.send(summonerStats);
