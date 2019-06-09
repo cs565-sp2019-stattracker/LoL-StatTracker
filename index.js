@@ -13,9 +13,9 @@ var request = require('request');
 const app = express();
 
 const APIKEY = "<Replace with API KEY>" /* Note: Don't commit the APIKEY */
-const SERVICE_REGIONS = ["BR","EUNE","EUW","JP","KR","LAN","LAS","NA", "OCE", "TR", "RU", "PBE"]; //Valid service regions
+const SERVICE_REGIONS = ["br","eune","euw","jp","kr","lan","las","na", "oce", "tr", "ru", "pbe"]; //Valid service regions
 const SERVICE_PLATFORM = ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1", "oc1", "tr1", "ru", "pbe1"]; // Corresponding service platform for the api call
-const CURRENT_SEASON = 9    //Current season for filtering matchlist api request
+const CURRENT_SEASON = 9;    //Current season for filtering matchlist api request
 
 var viewPath = __dirname + '/views';
 var publicPath = __dirname + '/public';
@@ -43,23 +43,114 @@ app.get('/test', (req, res) => {
     res.send("Reached end of test route, check serverside console log");
 });
 
-
-//Post request, submit button - still do checks
-app.post('/submit', (req, res) => {
-    //https://developer.riotgames.com/regional-endpoints.html
-    //Check if get parameters exist and Service region passed in is valid
-    if(!SERVICE_REGIONS.includes(req.body.regionName))
+app.get('/frontendTest', (req, res) => {
+    console.log(req.body.summoner);
+    console.log(req.body.region);
+    if(!SERVICE_REGIONS.includes(req.body.region))
     {
         //https://stackoverflow.com/questions/35864088/how-to-send-error-http-response-in-express-node-js/35865605
-        console.log("Error, Illegal region name" + req.body.regionName)
+        console.log("Error, Illegal region name" + req.body.summoner)
         return res.status(400).send({
             message: 'Illegal region name'
         });
     }
     //Check if Summoner Name is valid
-    if(!/^[0-9\\p{L} _\\.]+$/.test(req.body.summonerName))
+    if(!/^[0-9\\p{L} _\\.]+$/.test(req.body.summoner))
     {
-        console.log("Error, Illegal character in Summoner Name" + req.body.summonerName)
+        console.log("Error, Illegal character in Summoner Name" + req.body.summoner)
+        return res.status(400).send({
+            message: 'Illegal character in Summoner Name'
+        });
+    }
+    else
+    {
+        
+        var summonerStats = {
+            'summonerLevel': 10,
+            'summonerId': 'someId',
+            'accountId': 'someAccountId'
+        };
+        summonerStats['championMasteryList'] = [];
+        for(var i = 0; i < 3; i = i + 1) {
+            summonerStats.championMasteryList.push({
+                'championId': 1,
+                'championLevel': 100,
+                'championPointsUntilNextLevel': 0
+            });
+        }
+
+        summonerStats['leagueEntryList'] = [];
+        for(var i = 0; i < 3; i = i + 1) {
+            summonerStats['leagueEntryList'].push({
+                'leagueId': i,
+                'wins': i+2,
+                'loss': 4,
+                'hotStreak': i-2,
+                'rank': 10,
+                'leaguePoints': 1000
+            });
+        }
+
+        summonerStats['matches'] = [];
+        for(var i = 0; i < 3; i = i + 1) {
+            summonerStats['matches'].push({
+                'matchId': i,
+                'championId': i+2,
+                'kills': i+5,
+                'deaths': i+4,
+                'win': true
+            });
+        }
+
+        //Structure of summonerStats at the end:
+        /*
+        summonerStats = {
+            'summonerLevel': int,
+            'summonerId': 'int',
+            'accountId': 'int',
+            'championMasteryList': [
+                'championId': int,
+                'championLevel': int,
+                'championPointsUntilNextLevel': int
+            ],
+            'leagueEntryList': [
+                'leagueId': int,
+                'wins': int,
+                'loss': int,
+                'hotStreak': int,
+                'rank': int,
+                'leaguePoints': int
+            ],
+            'matches': [
+                'matchId': int,
+                'championId': int,
+                'kills': int,
+                'deaths': int,
+                'win': bool
+            ]
+        }
+        */
+        res.send(summonerStats);
+    }
+});
+
+
+//Post request, submit button - still do checks
+app.post('/submit', (req, res) => {
+    //https://developer.riotgames.com/regional-endpoints.html
+    //Check if get parameters exist and Service region passed in is valid
+    if(!SERVICE_REGIONS.includes(req.body.region))
+    {
+        //https://stackoverflow.com/questions/35864088/how-to-send-error-http-response-in-express-node-js/35865605
+        console.log("Error, Illegal region name" + req.body.region)
+        return res.status(400).send({
+            message: 'Illegal region name'
+        });
+    }
+    //Check if Summoner Name is valid
+    if(!/^[0-9\\p{L} _\\.]+$/.test(req.body.summoner))
+    {
+        console.log("Error, Illegal character in Summoner Name" + req.body.summoner)
         return res.status(400).send({
             message: 'Illegal character in Summoner Name'
         });
@@ -68,21 +159,21 @@ app.post('/submit', (req, res) => {
     {
         //Check if combination of summoner name and service region is already recorded in the invalidSearch object, 
         //If so, we know API call using the values returned error in the past and we can skip the search
-        if(invalidSearch[req.body.summonerName] !== undefined && invalidSearch[req.body.summonerName].includes(req.body.regionName) )
+        if(invalidSearch[req.body.summoner] !== undefined && invalidSearch[req.body.summoner].includes(req.body.region) )
         {
             return res.status(400).send({
                 message: 'Summoner was not found in the region specified'
             });
         }
-        var platformIndex = SERVICE_REGIONS.indexOf(req.body.regionName);
+        var platformIndex = SERVICE_REGIONS.indexOf(req.body.region);
         var apiRequest = "https://" + SERVICE_PLATFORM[platformIndex] + ".api.riotgames.com/lol/";
         var summonerStats = {}; //Object that will contain the necessary stats to be displayed
 
-        getSummonerByName(apiRequest, req.body.summonerName).then(
+        getSummonerByName(apiRequest, req.body.summoner).then(
             function(summonerObj) {
                 console.log(summonerObj);
                 summonerStats[SummonerLevel] = summonerObj.summonerLevel;  //For display
-                summonerStats[summonerID] = summonerObj.id;                //Encrypted, for other API call
+                summonerStats[summonerId] = summonerObj.id;                //Encrypted, for other API call
                 summonerStats[accountId] = summonerObj.accountId;          //Encrypted, for other API call
 
                 //getChampionMastery
@@ -90,7 +181,7 @@ app.post('/submit', (req, res) => {
                     function(masteryObjList) {
                         summonerStats.championMasteryList = [];
                         for(var masteryObj in masteryObjList){
-                            summonerStats.mastery.push({
+                            summonerStats.championMasteryList.push({
                                 'championId': masteryObj.championId,
                                 'championLevel': masteryObj.championLevel,
                                 'championPointsUntilNextLevel': masteryObj.championPointsUntilNextLevel
