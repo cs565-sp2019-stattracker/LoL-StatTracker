@@ -19,10 +19,6 @@ const CURRENT_SEASON = 9;    //Current season for filtering matchlist api reques
 
 var viewPath = __dirname + '/views';
 var publicPath = __dirname + '/public';
-var summonerIDArr = {};  //Store Summonername - SummonerID
-var summonerData = {};   //Store user data
-var invalidSearch = {};  //Store SummonerName x ServiceRegion API request that returned an error, prevent useless future API call, objects inside should be "summonerName": ["region1", "region2", etc.]
-
 
 app.use(express.static(publicPath));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -145,12 +141,6 @@ app.post('/submit', (req, res) => {
     //Check if Summoner Name is valid
     if(/^[0-9A-Za-z _.]+$/.test(req.body.summoner))
     {
-        //Check if combination of summoner name and service region is already recorded in the invalidSearch object, 
-        //If so, we know API call using the values returned error in the past and we can skip the search
-        if(invalidSearch[req.body.summoner] !== undefined && invalidSearch[req.body.summoner].includes(req.body.region) )
-        {
-            return res.status(400).json({ error: 'Summoner not found on region specified' });
-        }
         var platformIndex = SERVICE_REGIONS.indexOf(req.body.region);
         var apiRequest = "https://" + SERVICE_PLATFORM[platformIndex] + ".api.riotgames.com/lol/";
         var summonerStats = {}; //Object that will contain the necessary stats to be displayed
@@ -269,7 +259,7 @@ app.post('/submit', (req, res) => {
 
 });
 
-//Wildcard for non-existant pages
+//Wildcard for non-existent pages
 app.get('*', (req, res) => {
     res.sendFile(viewPath + "/404.html");
 });
