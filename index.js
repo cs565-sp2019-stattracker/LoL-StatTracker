@@ -6,7 +6,7 @@
     https://cloud.google.com/community/tutorials/run-expressjs-on-google-app-engine
 */
 const express = require('express'); 
-var bodyParser = require("body-parser");
+var bodyParser = require('body-parser');
 var querystring = require('querystring');
 var http = require('http'); //For making http requests using LoL API
 var request = require('request');
@@ -30,68 +30,45 @@ app.get('/', (req, res) => {
     res.sendFile(viewPath + "/index.html");
 });
 
+//Testing route
+app.get('/test', (req, res) => {
+    const testSummonerName = "eliptic";
+    const testServicePlatform = "na1";
+    var apiRequest = "https://" + SERVICE_PLATFORM[platformIndex] + "api.riotgames.com/lol/";
+    getSummonerByName
+});
+
 //Post request, submit button - still do checks
 app.post('/submit', (req, res) => {
     //https://developer.riotgames.com/regional-endpoints.html
     //Check if get parameters exist and Service region passed in is valid
-    if(req.query.regionName === undefined || req.query.summonerName === undefined || !SERVICE_REGIONS.includes(req.query.regionName))
+    if(!SERVICE_REGIONS.includes(req.query.regionName))
     {
-        res.sendFile(viewPath + "/index.html");
+        //https://stackoverflow.com/questions/35864088/how-to-send-error-http-response-in-express-node-js/35865605
+        console.log("Error, Illegal region name" + req.query.regionName)
+        return res.status(400).send({
+            message: 'Illegal region name'
+        });
+    }
+    //Check if Summoner Name is valid, invalid -> Landing page
+    if(!/^[0-9\\p{L} _\\.]+$/.test(req.query.summonerName))
+    {
+        console.log("Error, Illegal character in Summoner Name" + req.query.summonerName)
+        return res.status(400).send({
+            message: 'Illegal character in Summoner Name'
+        });
     }
     else
     {
-        //Check if Summoner Name is valid, invalid -> Landing page
-        if(!/^[0-9\\p{L} _\\.]+$/.test(req.query.summonerName))
+        //Check if combination of summoner name and service region is already recorded in the invalidSearch object, 
+        //If so, we know API call using the values returned error in the past and we can skip the search
+        if(invalidSearch[req.query.summonerName] !== undefined && invalidSearch[req.query.summonerName].includes(req.query.regionName) )
         {
-            res.sendFile(viewPath + "/index.html");
+            return res.status(400).send({
+                message: 'Summoner was not found in the region specified'
+            });
         }
-        else
-        {
-            //Check if combination of summoner name and service region is already recorded in the invalidSearch object, 
-            //If so, we know API call using the values returned error in the past and we can skip the search
-            if(invalidSearch[req.query.summonerName] !== undefined && invalidSearch[req.query.summonerName].includes(req.query.regionName) )
-            {
-                res.sendFile(viewPath + "/index.html");
-            }
-            else
-            {
-                var platformIndex = SERVICE_REGIONS.indexOf(req.query.regionName);
-                var apiRequest = "https://" + SERVICE_PLATFORM[platformIndex] + "api.riotgames.com/lol/";
-                //Make API call
-                //Do API call (http get request)
-                /* https://developer.riotgames.com/getting-started.html */
-
-                /* Resource for the alert: https://stackoverflow.com/questions/52003021/node-js-express-request-fade-in-and-out-bootstrap-modal-on-request-error */
-                //Callbacks, wrap in API call 
-                //success callback
-                /*
-                res.status(200);
-                res.set({
-                    'Content-Type': 'text/html',
-                });
-                res.write('<div class="alert alert-success alert-dismissible fade show">');
-                res.write('<strong>Success</strong>Summoner Found - Stats should be displayed shortly.');
-                res.write('<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-                //Display stats in table
-                res.end();
-
-                //failure callback, wrap 
-                res.status(404);
-                res.set({
-                    'Content-Type': 'text/html',
-                });
-                res.write('<div class="alert alert-danger alert-dismissible fade show">');
-                res.write('<strong>Error</strong>Summoner not found - Please enter another summoner name.');
-                res.write('<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-                res.end();
-                //Part of error callback, Add summonername x Service region in the invalid array
-                if(!invalidSearch.includes(req.query.summonerName))
-                    invalidSearch[req.query.summonerName] = [req.query.regionName];
-                else
-                    invalidSearch[req.query.summonerName].push(req.query.regionName);
-                    */
-            }
-        }
+        var platformIndex = SERVICE_REGIONS.indexOf(req.query.regionName);
     }
 });
 
@@ -109,18 +86,48 @@ const server = app.listen(8080, () => {
 
 //Get encrypted summoner ID used for further API calls
 var getSummonerByName = function(apiBaseURI, summonerName) {
-    var reqURI = apiBaseURI + "summoner/v4/summoners/by-name/" + summonerName;
+    var reqURI = apiBaseURI + "summoner/v4/summoners/by-name/" + summonerName + "?api_key=" + APIKEY;
+
+    var options = {
+        url: reqURI,
+        json: true
+    };
+
+    var promise = new Promise(function(resolve, reject) {
+        request.get(options, function(error, response, body){
+            resolve (body);
+        })
+    });  
+
+    promise.then(function(data) {
+        return data; 
+    }, function(err) {
+        console.log(err); 
+        return [];
+    });
+
+    return promise;
 }
 
 // Win/Loss ratio
 // Win streak
 var getLeagueEntries = function (apiBaseURI, summonerID) {
-    var reqURI = apiBaseURI + "league/v4/entries/by-summoner/{encryptedSummonerId}" + summonerID;
+    var reqURI = apiBaseURI + "league/v4/entries/by-summoner/{encryptedSummonerId}" + summonerID  + "?api_key=" + APIKEY;
+
+    var options = {
+        url: reqURI,
+        json: true
+    };
 }
 
 // Champion Mastery, first four?
 var getChampionMastery = function(apiBaseURI, summonerID) {
-    var reqURI = "champion-mastery/v4/champion-masteries/by-summoner/" + summonerID;
+    var reqURI = "champion-mastery/v4/champion-masteries/by-summoner/" + summonerID  + "?api_key=" + APIKEY;
+
+    var options = {
+        url: reqURI,
+        json: true
+    };
 }
 
 //Summoner's win/loss for each Champion?
