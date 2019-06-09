@@ -25,6 +25,8 @@ var invalidSearch = {};  //Store SummonerName x ServiceRegion API request that r
 
 
 app.use(express.static(publicPath));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 //Root route, just send the homepage
 app.get('/', (req, res) => {
