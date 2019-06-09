@@ -5,8 +5,11 @@
     https://www.codementor.io/codeforgeek/build-website-from-scratch-using-expressjs-and-bootstrap-du107sby7
     https://cloud.google.com/community/tutorials/run-expressjs-on-google-app-engine
 */
-var http = require('http');         //For making http requests using LoL API
 const express = require('express'); 
+var bodyParser = require("body-parser");
+var querystring = require('querystring');
+var http = require('http'); //For making http requests using LoL API
+var request = require('request');
 const app = express();
 
 const APIKEY = "<APIKEY HERE>" /* Note: Don't commit the APIKEY */
@@ -21,8 +24,13 @@ var invalidSearch = {};  //Store SummonerName x ServiceRegion API request that r
 
 app.use(express.static(publicPath));
 
+//Root route, just send the homepage
 app.get('/', (req, res) => {
-    
+    res.sendFile(viewPath + "/index.html");
+});
+
+//Post request, submit button - still do checks
+app.post('/submit', (req, res) => {
     //https://developer.riotgames.com/regional-endpoints.html
     //Check if get parameters exist and Service region passed in is valid
     if(req.query.regionName === undefined || req.query.summonerName === undefined || !SERVICE_REGIONS.includes(req.query.regionName))
@@ -81,13 +89,9 @@ app.get('/', (req, res) => {
                 else
                     invalidSearch[req.query.summonerName].push(req.query.regionName);
                     */
-
             }
         }
-
-
     }
-
 });
 
 //Wildcard for non-existant pages
