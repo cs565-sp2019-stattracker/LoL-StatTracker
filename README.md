@@ -25,7 +25,7 @@
 
 4. Navigate to local repo location and enter `gcloud app deploy`
 
-#Remote deploy - macOS
+## Remote deploy - macOS
 1. https://cloud.google.com/sdk/docs/quickstart-macos
 
 2. `Do Before You Begin` and `Initialize the SDK` sections
