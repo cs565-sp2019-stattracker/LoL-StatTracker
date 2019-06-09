@@ -68,7 +68,7 @@ app.post('/frontendTest', (req, res) => {
         summonerStats['championMasteryList'] = [];
         for(var i = 0; i < 3; i = i + 1) {
             summonerStats.championMasteryList.push({
-                'championId': 1,
+                'championId': "ascv341564",
                 'championLevel': 100,
                 'championPointsUntilNextLevel': 0
             });
@@ -77,11 +77,11 @@ app.post('/frontendTest', (req, res) => {
         summonerStats['leagueEntryList'] = [];
         for(var i = 0; i < 3; i = i + 1) {
             summonerStats['leagueEntryList'].push({
-                'leagueId': i,
+                'leagueId': "someLeague",
                 'wins': i+2,
                 'loss': 4,
                 'hotStreak': i-2,
-                'rank': 10,
+                'rank': 'Platinum 4',
                 'leaguePoints': 1000
             });
         }
@@ -174,9 +174,9 @@ app.post('/submit', (req, res) => {
         getSummonerByName(apiRequest, req.body.summoner).then(
             function(summonerObj) {
                 console.log(summonerObj);
-                summonerStats[SummonerLevel] = summonerObj.summonerLevel;  //For display
-                summonerStats[summonerId] = summonerObj.id;                //Encrypted, for other API call
-                summonerStats[accountId] = summonerObj.accountId;          //Encrypted, for other API call
+                summonerStats['SummonerLevel'] = summonerObj.summonerLevel;  //For display
+                summonerStats['summonerId'] = summonerObj.id;                //Encrypted, for other API call
+                summonerStats['accountId'] = summonerObj.accountId;          //Encrypted, for other API call
 
                 //getChampionMastery
                 getChampionMastery(apiRequest, summonerObj.id).then(
@@ -217,7 +217,6 @@ app.post('/submit', (req, res) => {
 
                 //Not sure how to get win/loss for each champion again?
                 //After thinking, I guess it is from calling matchlist then individual matches (but rate limit on individual matches per 10 secs...)
-                /*
                 //This function gets a list of matches, each with a matchId, a championId, kills, deaths, win(True/False)
                 getMatchList(apiRequest, summonerObj.accountId).then(
                     function(matchList) {
@@ -268,7 +267,6 @@ app.post('/submit', (req, res) => {
                 function(error) {
                     console.log(err);
                 };
-                */
 
                 //Send object with gathered/ compiled summoner data to Frontend
                 res.send(summonerStats);
