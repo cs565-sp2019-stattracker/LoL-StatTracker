@@ -73,7 +73,33 @@
 	//example for Aatrox "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png" 
 	var championImageSquaresURL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/"
 
+	//Given champion id, return champion name
+	function search(championId){
+		var data = championData.responseJSON.data;
+		//console.log(data);
+		var keys = Object.keys(data);
+		//console.log(keys)
+		var len = keys.length;
+		var champObj = {}
+		for(var i = 0; i < len; i += 1) {
+			var champion = data[keys[i]];
+
+			if(champion['key'] == championId) {
+				//console.log(champion['key']);
+				//console.log(champion.name);
+				console.log(champion.image);
+				console.log(champion.image.full);
+				champObj['name'] = champion.name;
+				champObj['full'] = champion.image.full;
+				console.log(champObj);
+				return champObj;
+			}
+		}
+		return champObj;
+	}
+
 	var showInfo = function(data) {
+		const winratio = data.leagueEntryList[0].wins/(data.leagueEntryList[0].wins + data.leagueEntryList[0].loss);
 		console.log(data);
 		$('.summonerInfo').html('');
 		var site = '';
@@ -89,10 +115,10 @@
 		site += '</thead>';
 		site += '<tbody>';
 		site += '<tr>';
-		site += '<th scope ="row">'+ 'eliptic' + '</th>';
-		site += '<th scope ="row">'+ 'Platinum 4' + '</th>';
-		site += '<th scope ="row">'+ '50.4' + '</th>';
-		site += '<th scope ="row">'+ 'StickyRiceCake' + '</th>';
+		site += '<th scope ="row">'+ data.summonerName + '</th>';
+		site += '<th scope ="row">'+ data.leagueEntryList[0].tier + " " + data.leagueEntryList[0].rank + '</th>';
+		site += '<th scope ="row">'+ winratio + '</th>';
+		site += '<th scope ="row">'+ data.leagueEntryList[0].queueType + '</th>';
 		site += '</tr>';
 		site += '</tbody>';
 		site += '</table>';
@@ -101,17 +127,24 @@
 		site += '<table class="table table-striped table-dark">';
 		site += '<thead>';
 		site += '<tr>';
-		site += '<th scope="col">Champion Name</th>';
+		site += '<th scope="col">Champion</th>';
+		//site += '<th scope="col">Name</th>';
 		site += '<th scope="col">Champion Mastery</th>';
 		site += '<th scope="col">Progress</th>';
 		site += '</tr>';
 		site += '</thead>';
 		site += '<tbody>';
 			for(var i = 0; i < 10; i+=1){
+				var champObj = search(data.championMasteryList[i].championId);
+				console.log(champObj);
 				site += '<tr>';
-				site += '<th scope = "row">' + 'champion' + '</th>'
-				site += '<th scope = "row">' + 'Mastery' + '</th>'
-				site += '<th scope = "row">' + 'Progress' + '</th>'
+				//site += '<th scope = "row">' + "<img class='img-thumbnail' src=" + championImageSquaresURL + champObj.full + '></th>'
+				site += '<th scope = "row">' + champObj.name + '</th>'
+				site += '<th scope = "row">' + data.championMasteryList[i].championLevel + '</th>'
+				if(data.championMasteryList[i].championPointsUntilNextLevel === 0)
+					site += '<th scope = "row">MAX Mastery reached</th>'
+				else
+					site += '<th scope = "row">' + data.championMasteryList[i].championPointsUntilNextLevel + '</th>'
 				site += '</tr>';
 			}
 		site += '</tbody>';
