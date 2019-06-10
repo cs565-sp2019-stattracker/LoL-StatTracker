@@ -62,6 +62,15 @@
 
 <script type ="text/javascript">
 
+	//Contain champion data, used to get name and image of champions
+	var championData = $.getJSON('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/champion.json', function(file) {
+			return file.data;
+	});
+	
+	//URL for getting image of each champion format is "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/{champion name}.png"
+	//example for Aatrox "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png" 
+	var championImageSquaresURL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/"
+
 	var showInfo = function(data) {
 		console.log(data)
 	};
