@@ -95,11 +95,11 @@
 				return champObj;
 			}
 		}
-		return champObj;
 	}
 
 	var showInfo = function(data) {
 		const winratio = data.leagueEntryList[0].wins/(data.leagueEntryList[0].wins + data.leagueEntryList[0].loss);
+		var championMax = 10;
 		console.log(data);
 		$('.summonerInfo').html('');
 		var site = '';
@@ -134,18 +134,26 @@
 		site += '</tr>';
 		site += '</thead>';
 		site += '<tbody>';
-			for(var i = 0; i < 10; i+=1){
+			for(var i = 0; i < championMax && i < data.championMasteryList.length; i+=1){
 				var champObj = search(data.championMasteryList[i].championId);
 				console.log(champObj);
-				site += '<tr>';
-				//site += '<th scope = "row">' + "<img class='img-thumbnail' src=" + championImageSquaresURL + champObj.full + '></th>'
-				site += '<th scope = "row">' + champObj.name + '</th>'
-				site += '<th scope = "row">' + data.championMasteryList[i].championLevel + '</th>'
-				if(data.championMasteryList[i].championPointsUntilNextLevel === 0)
-					site += '<th scope = "row">MAX Mastery reached</th>'
+				//Skip removed/ obsolete championIds
+				if(champObj === undefined)
+				{
+					championMax += 1;
+				}
 				else
-					site += '<th scope = "row">' + data.championMasteryList[i].championPointsUntilNextLevel + '</th>'
-				site += '</tr>';
+				{
+					site += '<tr>';
+					//site += '<th scope = "row">' + "<img class='img-thumbnail' src=" + championImageSquaresURL + champObj.full + '></th>'
+					site += '<th scope = "row">' + champObj.name + '</th>'
+					site += '<th scope = "row">' + data.championMasteryList[i].championLevel + '</th>'
+					if(data.championMasteryList[i].championPointsUntilNextLevel === 0)
+						site += '<th scope = "row">MAX Mastery reached</th>'
+					else
+						site += '<th scope = "row">' + data.championMasteryList[i].championPointsUntilNextLevel + '</th>'
+					site += '</tr>';
+				}
 			}
 		site += '</tbody>';
 		site += '</table>';
