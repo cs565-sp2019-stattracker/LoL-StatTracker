@@ -63,6 +63,7 @@
 <script type ="text/javascript">
 
 	//Contain champion data, used to get name and image of champions
+	//See: https://developer.riotgames.com/static-data.html
 	var championData = $.getJSON('http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/champion.json', function(file) {
 			return file.data;
 	});
