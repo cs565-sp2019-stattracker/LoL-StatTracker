@@ -90,7 +90,7 @@ app.post('/frontendTest', (req, res) => {
             });
         }
 
-        //Structure of summonerStats at the end:
+        //Structure of summonerStats at the end: asdf
         /*
         summonerStats = {
             'summonerLevel': int,
