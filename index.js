@@ -54,45 +54,79 @@ app.post('/frontendTest', (req, res) => {
     if(/^[0-9A-Za-z _.]+$/.test(req.body.summoner))
     {
         var summonerStats = {
-            'summonerLevel': 10,
-            'summonerId': 'someId',
-            'accountId': 'someAccountId'
+            'summonerName': 'Eliptic',
+            'summonerLevel': 100,
+            'summonerId': '0FE2Reef7J9rMAU10ym9cQoJDxO5FCx7riMmsfsAPN4',
+            'accountId': 'ty59yCxqwU_gzYXfbWWKii-NUFQ07apz3Fyh6RDFhA'
         };
         summonerStats['championMasteryList'] = [];
-        for(var i = 0; i < 3; i = i + 1) {
-            summonerStats.championMasteryList.push({
-                'championId': i+14,
-                'championLevel': 100-i,
+        summonerStats.championMasteryList.push({
+                'championId': 81,
+                'championLevel': 5,
                 'championPointsUntilNextLevel': 0
-            });
-        }
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 98,
+            'championLevel': 5,
+            'championPointsUntilNextLevel': 0
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 141,
+            'championLevel': 5,
+            'championPointsUntilNextLevel': 0
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 102,
+            'championLevel': 5,
+            'championPointsUntilNextLevel': 0
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 203,
+            'championLevel': 5,
+            'championPointsUntilNextLevel': 0
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 13,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 1724
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 5,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 1736
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 67,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 3091
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 121,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 3689
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 20,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 3974
+        });
 
         summonerStats['leagueEntryList'] = [];
-        for(var i = 0; i < 3; i = i + 1) {
-            summonerStats['leagueEntryList'].push({
-                'leagueId': "someLeague",
-                'wins': i+2,
-                'loss': 4,
-                'hotStreak': true,
-                'rank': 'Platinum 4',
-                'leaguePoints': 1000
-            });
-        }
-
-        summonerStats['matches'] = [];
-        for(var i = 0; i < 3; i = i + 1) {
-            summonerStats['matches'].push({
-                'matchId': i,
-                'championId': i+2,
-                'kills': i+5,
-                'deaths': i+4,
-                'win': true
-            });
-        }
+        summonerStats['leagueEntryList'].push({
+            'leagueId': "2a3e6690-457a-11e9-8d57-c81f66cf2333",
+            'queueType': 'RANKED_SOLO_5x5',
+            'wins': 101,
+            'loss': 108,
+            'hotStreak': false,
+            'tier': 'PLATINUM',
+            'rank': 'IV',
+            'leaguePoints': 68
+        });
 
         //Structure of summonerStats at the end: asdf
         /*
         summonerStats = {
+            'summonerName': string,
             'summonerLevel': int,
             'summonerId': 'int',
             'accountId': 'int',
@@ -148,6 +182,8 @@ app.post('/submit', (req, res) => {
         getSummonerByName(apiRequest, req.body.summoner).then(
             function(summonerObj) {
                 console.log("Received: " + JSON.stringify(summonerObj));
+                summonerStats['profileIconId'] = summonerObj.profileIconId;
+                summonerStats['summonerName'] = summonerObj.name;
                 summonerStats['SummonerLevel'] = summonerObj.summonerLevel;  //For display
                 summonerStats['summonerId'] = summonerObj.id;                //Encrypted, for other API call
                 summonerStats['accountId'] = summonerObj.accountId;          //Encrypted, for other API call
