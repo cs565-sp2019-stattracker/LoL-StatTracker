@@ -1,1 +1,50 @@
-/* File containing css style to serve for 404.html / wildcard route ('*') */
+html, body{
+    width:100%;
+    height: 100%;
+}
+
+main{
+    width: 100%;
+}
+
+@font-face {
+    font-family: QuadratSerial;
+    src: url(../fonts/SoftMaker\ -\ QuadratSerial.otf);
+  }
+
+.wrapper{
+    background-image: url(../images/bg-default.jpg);
+    background-size: cover;
+    display: flex;
+    width: 100%;
+    height: 93vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.footer {
+    display: flex;
+    height: 7vh;
+    width: 100%;
+    align-items: center;
+    background: #020202;
+    /*padding: 10px 0; */
+    color: white;
+}
+
+.footer a {
+    color: white;
+    font-size: 20px;
+    padding: 10px;
+    transition: all .5s ease;
+}
+  
+.footer a:hover {
+    color: #70726F;
+}
+
+.title{
+    color: white;
+    font-family: QuadratSerial;
+}
