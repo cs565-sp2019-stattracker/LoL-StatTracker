@@ -173,6 +173,8 @@
 
 	var showError = function(data) {
 		console.log(data.responseJSON.error);
+		$('.summonerinfo').html(site);
+		$('.summonerInfo').css('display', 'none');
 		toastr.options = {
 			"closeButton": true,
 			"debug": false,
