@@ -173,7 +173,7 @@
 
 	var showError = function(data) {
 		console.log(data.responseJSON.error);
-		$('.summonerinfo').html(site);
+		$('.summonerinfo').html('');
 		$('.summonerInfo').css('display', 'none');
 		toastr.options = {
 			"closeButton": true,
@@ -198,7 +198,7 @@
 	$('#submit').on('click', function(event){
 		console.log("search button clicked event");
 		$.ajax({
-			'url' : '/frontendTest',
+			'url' : '/submit',
 			'type' : 'POST',
 			'data' : { region: $('#reg').val(), summoner: $('#summoner').val() },
 			'success' : showInfo,

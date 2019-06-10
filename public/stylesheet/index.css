@@ -29,7 +29,6 @@ main{
     background-size: cover;
     display: none;
     width: 100%;
-    min-height: 93vh;
     justify-content: center;
     align-items: center;
     flex-direction: column;
