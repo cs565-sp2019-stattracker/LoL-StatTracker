@@ -43,7 +43,7 @@
 					<button class="btn btn-primary btn-md mx-2" type="submit" id="submit">Search</button>
 				</div>
 			</div>
-			<div class ="output"></div>
+			<div class ="summonerInfo" id="output"></div>
 			<div class ="footer">
 					<div class="container">
 						<div class="d-flex justify-content-between">
@@ -75,18 +75,50 @@
 
 	var showInfo = function(data) {
 		console.log(data);
-		$('output').html('');
+		$('.summonerInfo').html('');
 		var site = '';
+		site += '<div class ="container">'
 		site += '<table class="table table-striped table-dark">';
 		site += '<thead>';
-		site += '<tr>'
+		site += '<tr class="table-info">';
 		site += '<th scope="col">Summoner Name</th>';
-		site += '</tr>'
-		site += '</thead>'
-		site += '</table>'
-		$('output').html(site);
-		$('#output').css("min-height", "100vw").css("min-width", "100vw");
-		$('output').css('display', 'float');
+		site += '<th scope="col">Rank</th>';
+		site += '<th scope="col">Win Percentage</th>';
+		site += '<th scope="col">League</th>';
+		site += '</tr>';
+		site += '</thead>';
+		site += '<tbody>';
+		site += '<tr>';
+		site += '<th scope ="row">'+ 'eliptic' + '</th>';
+		site += '<th scope ="row">'+ 'Platinum 4' + '</th>';
+		site += '<th scope ="row">'+ '50.4' + '</th>';
+		site += '<th scope ="row">'+ 'StickyRiceCake' + '</th>';
+		site += '</tr>';
+		site += '</tbody>';
+		site += '</table>';
+		site += '</div>'
+		site += '<div class ="container">'
+		site += '<table class="table table-striped table-dark">';
+		site += '<thead>';
+		site += '<tr>';
+		site += '<th scope="col">Champion Name</th>';
+		site += '<th scope="col">Champion Mastery</th>';
+		site += '<th scope="col">Progress</th>';
+		site += '</tr>';
+		site += '</thead>';
+		site += '<tbody>';
+			for(var i = 0; i < 10; i+=1){
+				site += '<tr>';
+				site += '<th scope = "row">' + 'champion' + '</th>'
+				site += '<th scope = "row">' + 'Mastery' + '</th>'
+				site += '<th scope = "row">' + 'Progress' + '</th>'
+				site += '</tr>';
+			}
+		site += '</tbody>';
+		site += '</table>';
+		site += '</div>'
+		$('.summonerInfo').html(site);
+		$('.summonerInfo').css('display', 'flex');
 	};
 
 	var showError = function(data) {
