@@ -103,9 +103,9 @@
 		$('.summonerInfo').html('');
 		var site = '';
 		site += '<div class ="container">'
-		site += '<table class="table table-striped table-dark">';
+		site += '<table class="table table-striped table-dark my-5">';
 		site += '<thead>';
-		site += '<tr class="table-info">';
+		site += '<tr>'; 
 		site += '<th scope="col">Summoner Name</th>';
 		site += '<th scope="col">Rank</th>';
 		site += '<th scope="col">Win Percentage</th>';
@@ -133,11 +133,11 @@
 		site += '</table>';
 		site += '</div>'
 		site += '<div class ="container">'
-		site += '<table class="table table-striped table-dark">';
+		site += '<table class="table table-striped table-dark mb-5">';
 		site += '<thead>';
 		site += '<tr>';
 		site += '<th scope="col">Champion</th>';
-		//site += '<th scope="col">Name</th>';
+		site += '<th scope="col">Name</th>'; //TODO
 		site += '<th scope="col">Champion Mastery</th>';
 		site += '<th scope="col">Progress</th>';
 		site += '</tr>';
@@ -154,7 +154,7 @@
 				else
 				{
 					site += '<tr>';
-					//site += '<th scope = "row">' + "<img class='img-thumbnail' src=" + championImageSquaresURL + champObj.full + '></th>'
+					site += '<th scope = "row">' + "<img class='img' src=" + championImageSquaresURL + champObj.full + '></th>'
 					site += '<th scope = "row">' + champObj.name + '</th>'
 					site += '<th scope = "row">' + data.championMasteryList[i].championLevel + '</th>'
 					if(data.championMasteryList[i].championPointsUntilNextLevel === 0)
@@ -196,7 +196,7 @@
 	$('#submit').on('click', function(event){
 		console.log("search button clicked event");
 		$.ajax({
-			'url' : '/submit',
+			'url' : '/frontendTest',
 			'type' : 'POST',
 			'data' : { region: $('#reg').val(), summoner: $('#summoner').val() },
 			'success' : showInfo,
