@@ -43,6 +43,7 @@
 					<button class="btn btn-primary btn-md mx-2" type="submit" id="submit">Search</button>
 				</div>
 			</div>
+			<div class ="output"></div>
 			<div class ="footer">
 					<div class="container">
 						<div class="d-flex justify-content-between">
@@ -73,7 +74,19 @@
 	var championImageSquaresURL = "http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/"
 
 	var showInfo = function(data) {
-		console.log(data)
+		console.log(data);
+		$('output').html('');
+		var site = '';
+		site += '<table class="table table-striped table-dark">';
+		site += '<thead>';
+		site += '<tr>'
+		site += '<th scope="col">Summoner Name</th>';
+		site += '</tr>'
+		site += '</thead>'
+		site += '</table>'
+		$('output').html(site);
+		$('#output').css("min-height", "100vw").css("min-width", "100vw");
+		$('output').css('display', 'float');
 	};
 
 	var showError = function(data) {
