@@ -98,7 +98,6 @@
 	}
 
 	var showInfo = function(data) {
-		const winratio = data.leagueEntryList[0].wins/(data.leagueEntryList[0].wins + data.leagueEntryList[0].loss);
 		var championMax = 10;
 		console.log(data);
 		$('.summonerInfo').html('');
@@ -116,9 +115,19 @@
 		site += '<tbody>';
 		site += '<tr>';
 		site += '<th scope ="row">'+ data.summonerName + '</th>';
-		site += '<th scope ="row">'+ data.leagueEntryList[0].tier + " " + data.leagueEntryList[0].rank + '</th>';
-		site += '<th scope ="row">'+ winratio + '</th>';
-		site += '<th scope ="row">'+ data.leagueEntryList[0].queueType + '</th>';
+		if(data.leagueEntryList.length === 0)
+		{
+			site += '<th scope ="row">UNRANKED</th>';
+			site += '<th scope ="row">N/A</th>';
+			site += '<th scope ="row">N/A</th>';
+		}
+		else
+		{
+			const winratio = ((data.leagueEntryList[0].wins/(data.leagueEntryList[0].wins + data.leagueEntryList[0].loss))*100).toFixed(2);
+			site += '<th scope ="row">'+ data.leagueEntryList[0].tier + " " + data.leagueEntryList[0].rank + '</th>';
+			site += '<th scope ="row">'+ winratio + '</th>';
+			site += '<th scope ="row">'+ data.leagueEntryList[0].queueType + '</th>';
+		}
 		site += '</tr>';
 		site += '</tbody>';
 		site += '</table>';
