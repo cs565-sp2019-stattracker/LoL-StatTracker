@@ -55,6 +55,7 @@ app.post('/frontendTest', (req, res) => {
     if(/^[0-9A-Za-z _.]+$/.test(req.body.summoner))
     {
         var summonerStats = {
+            'summonerName': 'Eliptic',
             'summonerLevel': 100,
             'summonerId': '0FE2Reef7J9rMAU10ym9cQoJDxO5FCx7riMmsfsAPN4',
             'accountId': 'ty59yCxqwU_gzYXfbWWKii-NUFQ07apz3Fyh6RDFhA'
@@ -67,11 +68,6 @@ app.post('/frontendTest', (req, res) => {
         });
         summonerStats.championMasteryList.push({
             'championId': 98,
-            'championLevel': 5,
-            'championPointsUntilNextLevel': 0
-        });
-        summonerStats.championMasteryList.push({
-            'championId': 141,
             'championLevel': 5,
             'championPointsUntilNextLevel': 0
         });
@@ -110,6 +106,11 @@ app.post('/frontendTest', (req, res) => {
             'championLevel': 4,
             'championPointsUntilNextLevel': 3974
         });
+        summonerStats.championMasteryList.push({
+            'championId': 51,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 4046
+        });
 
         summonerStats['leagueEntryList'] = [];
         summonerStats['leagueEntryList'].push({
@@ -141,6 +142,7 @@ app.post('/frontendTest', (req, res) => {
         //Remember championMasteryList and leagueEntryList are an array of objects
         /*
         summonerStats = {
+            'summonerName': string
             'summonerLevel': int,
             'summonerId': 'int',
             'accountId': 'int',
@@ -190,6 +192,7 @@ app.post('/submit', (req, res) => {
         getSummonerByName(apiRequest, req.body.summoner).then(
             function(summonerObj) {
                 console.log("Received: " + JSON.stringify(summonerObj));
+                summonerStats['summonerName'] = summonerObj.name;
                 summonerStats['SummonerLevel'] = summonerObj.summonerLevel;  //For display
                 summonerStats['summonerId'] = summonerObj.id;                //Encrypted, for other API call
                 summonerStats['accountId'] = summonerObj.accountId;          //Encrypted, for other API call
@@ -291,13 +294,16 @@ app.post('/submit', (req, res) => {
                             }, 
                         function(error) {   //get League Entries
                             console.log(err);
+                            return res.status(400).json(err);
                         });
                     }, 
                     function(error) {   //get Champion Mastery
                         console.log(err);
+                        return res.status(400).json(err);
                 });
             }, function(err) {  //get Summoner 
                 console.log(err);
+                return res.status(400).json(err);
             });
     }
     else
