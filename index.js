@@ -147,7 +147,7 @@ app.post('/submit', (req, res) => {
 
         getSummonerByName(apiRequest, req.body.summoner).then(
             function(summonerObj) {
-                console.log("Received: " + summonerObj);
+                console.log("Received: " + JSON.stringify(summonerObj));
                 summonerStats['SummonerLevel'] = summonerObj.summonerLevel;  //For display
                 summonerStats['summonerId'] = summonerObj.id;                //Encrypted, for other API call
                 summonerStats['accountId'] = summonerObj.accountId;          //Encrypted, for other API call
@@ -155,6 +155,7 @@ app.post('/submit', (req, res) => {
                 //getChampionMastery
                 getChampionMastery(apiRequest, summonerObj.id).then(
                     function(masteryObjList) {
+                        console.log("Received: " + JSON.stringify(masteryObjList));
                         summonerStats['championMasteryList'] = [];
                         for(var masteryObj in masteryObjList){
                             summonerStats.championMasteryList.push({
@@ -172,6 +173,7 @@ app.post('/submit', (req, res) => {
                 //getLeagueEntries
                 getLeagueEntries(apiRequest, summonerObj.id).then(
                     function(leagueEntriesSet) {
+                        console.log("Received: " + JSON.stringify(leagueEntriesSet));
                         summonerStats['leagueEntryList'] = [];
                         for(var entry in leagueEntriesSet) {
                             summonerStats.leagueEntryList.push({
@@ -315,6 +317,7 @@ var getLeagueEntries = function (apiBaseURI, summonerId) {
     });  
 
     promise.then(function(data) {
+        console.log(data);
         return data; 
     }, function(err) {
         console.log(err); 
@@ -341,6 +344,7 @@ var getChampionMastery = function(apiBaseURI, summonerId) {
     });  
 
     promise.then(function(data) {
+        console.log(data);
         return data; 
     }, function(err) {
         console.log(err); 
