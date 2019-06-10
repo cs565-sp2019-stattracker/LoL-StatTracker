@@ -12,7 +12,7 @@ var http = require('http'); //For making http requests using LoL API
 var request = require('request');
 const app = express();
 
-const APIKEY = "<Replace with API KEY>" /* Note: Don't commit the APIKEY */
+const APIKEY = "<INSERT API KEY HERE>" /* Note: Don't commit the APIKEY */
 const SERVICE_REGIONS = ["br","eune","euw","jp","kr","lan","las","na", "oce", "tr", "ru", "pbe"]; //Valid service regions
 const SERVICE_PLATFORM = ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1", "oc1", "tr1", "ru", "pbe1"]; // Corresponding service platform for the api call
 const CURRENT_SEASON = 9;    //Current season for filtering matchlist api request
@@ -41,6 +41,7 @@ app.get('/testAPIcall', (req, res) => {
     res.send("Reached end of test route, check serverside console log");
 });
 
+//Frontend testing sample data, also backup in case fails
 app.post('/frontendTest', (req, res) => {
     console.log(req.body.summoner);
     console.log(req.body.region);
@@ -54,31 +55,76 @@ app.post('/frontendTest', (req, res) => {
     if(/^[0-9A-Za-z _.]+$/.test(req.body.summoner))
     {
         var summonerStats = {
-            'summonerLevel': 10,
-            'summonerId': 'someId',
-            'accountId': 'someAccountId'
+            'summonerLevel': 100,
+            'summonerId': '0FE2Reef7J9rMAU10ym9cQoJDxO5FCx7riMmsfsAPN4',
+            'accountId': 'ty59yCxqwU_gzYXfbWWKii-NUFQ07apz3Fyh6RDFhA'
         };
         summonerStats['championMasteryList'] = [];
-        for(var i = 0; i < 3; i = i + 1) {
-            summonerStats.championMasteryList.push({
-                'championId': i+14,
-                'championLevel': 100-i,
+        summonerStats.championMasteryList.push({
+                'championId': 81,
+                'championLevel': 5,
                 'championPointsUntilNextLevel': 0
-            });
-        }
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 98,
+            'championLevel': 5,
+            'championPointsUntilNextLevel': 0
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 141,
+            'championLevel': 5,
+            'championPointsUntilNextLevel': 0
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 102,
+            'championLevel': 5,
+            'championPointsUntilNextLevel': 0
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 203,
+            'championLevel': 5,
+            'championPointsUntilNextLevel': 0
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 13,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 1724
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 5,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 1736
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 67,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 3091
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 121,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 3689
+        });
+        summonerStats.championMasteryList.push({
+            'championId': 20,
+            'championLevel': 4,
+            'championPointsUntilNextLevel': 3974
+        });
 
         summonerStats['leagueEntryList'] = [];
-        for(var i = 0; i < 3; i = i + 1) {
-            summonerStats['leagueEntryList'].push({
-                'leagueId': "someLeague",
-                'wins': i+2,
-                'loss': 4,
-                'hotStreak': true,
-                'rank': 'Platinum 4',
-                'leaguePoints': 1000
-            });
-        }
+        summonerStats['leagueEntryList'].push({
+            'leagueId': "2a3e6690-457a-11e9-8d57-c81f66cf2333",
+            'queueType': 'RANKED_SOLO_5x5',
+            'wins': 101,
+            'loss': 108,
+            'hotStreak': false,
+            'tier': 'PLATINUM',
+            'rank': 'IV',
+            'leaguePoints': 68
+        });
+        
 
+        /*
         summonerStats['matches'] = [];
         for(var i = 0; i < 3; i = i + 1) {
             summonerStats['matches'].push({
@@ -89,32 +135,28 @@ app.post('/frontendTest', (req, res) => {
                 'win': true
             });
         }
+        */
 
-        //Structure of summonerStats at the end: asdf
+        //Structure of summonerStats at the end: 
+        //Remember championMasteryList and leagueEntryList are an array of objects
         /*
         summonerStats = {
             'summonerLevel': int,
             'summonerId': 'int',
             'accountId': 'int',
             'championMasteryList': [
-                'championId': long,
+                {'championId': long,
                 'championLevel': int,
-                'championPointsUntilNextLevel': long
+                'championPointsUntilNextLevel': long}
             ],
             'leagueEntryList': [
-                'leagueId': string,
+                {'leagueId': string,
                 'wins': int,
                 'loss': int,
                 'hotStreak': bool,
+                'tier: string,
                 'rank': string,
-                'leaguePoints': int
-            ],
-            'matches': [
-                'matchId': long,
-                'championId': long,
-                'kills': int,
-                'deaths': int,
-                'win': bool
+                'leaguePoints': int}
             ]
         }
         */
@@ -151,107 +193,112 @@ app.post('/submit', (req, res) => {
                 summonerStats['SummonerLevel'] = summonerObj.summonerLevel;  //For display
                 summonerStats['summonerId'] = summonerObj.id;                //Encrypted, for other API call
                 summonerStats['accountId'] = summonerObj.accountId;          //Encrypted, for other API call
-
+                summonerStats['championMasteryList'] = [];
+                summonerStats['leagueEntryList'] = [];
                 //getChampionMastery
                 getChampionMastery(apiRequest, summonerObj.id).then(
                     function(masteryObjList) {
-                        console.log("Received: " + JSON.stringify(masteryObjList));
-                        summonerStats['championMasteryList'] = [];
-                        for(var masteryObj in masteryObjList){
+                        //console.log("Received: " + JSON.stringify(masteryObjList));
+                        for(var i = 0; i < masteryObjList.length; i += 1) {
+                            //console.log(masteryObjList[i]);
+                            //console.log(masteryObjList[i].championId);
                             summonerStats.championMasteryList.push({
-                                'championId': masteryObj.championId,
-                                'championLevel': masteryObj.championLevel,
-                                'championPointsUntilNextLevel': masteryObj.championPointsUntilNextLevel
+                                'championId': masteryObjList[i].championId,
+                                'championLevel': masteryObjList[i].championLevel,
+                                'championPointsUntilNextLevel': masteryObjList[i].championPointsUntilNextLevel
                             });
                         }
-                    }
-                ), 
-                function(error) {
-                    console.log(err);
-                };
+                        //getLeagueEntries
+                        getLeagueEntries(apiRequest, summonerObj.id).then(
+                            function(leagueEntriesSet) {
+                                //console.log("Received: " + JSON.stringify(leagueEntriesSet));
 
-                //getLeagueEntries
-                getLeagueEntries(apiRequest, summonerObj.id).then(
-                    function(leagueEntriesSet) {
-                        console.log("Received: " + JSON.stringify(leagueEntriesSet));
-                        summonerStats['leagueEntryList'] = [];
-                        for(var entry in leagueEntriesSet) {
-                            summonerStats.leagueEntryList.push({
-                                'leagueId': entry.leagueId,
-                                'wins': entry.wins,
-                                'loss': entry.losses,
-                                'hotStreak': entry.hotStreak,
-                                'rank': entry.rank,
-                                'leaguePoints': entry.leaguePoints
-                            });
-                        }
-                    }
-                ), 
-                function(error) {
-                    console.log(err);
-                };
-
-                /* Uncomment if we need match data
-                //Not sure how to get win/loss for each champion again?
-                //After thinking, I guess it is from calling matchlist then individual matches (but rate limit on individual matches per 10 secs...)
-                //This function gets a list of matches, each with a matchId, a championId, kills, deaths, win(True/False)
-                getMatchList(apiRequest, summonerObj.accountId).then(
-                    function(matchList) {
-                        summonerStats.matches = [];
-                        for(var matchId in matchList){
-                            getMatch(apiRequest, matchId).then(
-                                function(match) {
-                                    var participantId = null;
-                                    //participantIdentityDTO, get the participantId of the summoner for the match
-                                    for(participant in match.participantIdentities) {
-                                        if(participant.player.summonerId === summonerObj.id) {
-                                            participantId = participant.participantId;
-                                        }
-                                    }
-
-                                    if(participantId !== null)
-                                    {
-                                        var championId = -1;
-                                        var kills = -1;
-                                        var deaths = -1;
-                                        var win = null
-                                        //participantDTO, get the championId, win(True/ False) and k/d
-                                        for(player in match.participants) {
-                                            if(participantId === player.participantId) {
-                                                championId = player.championId;
-                                                for(stats in player.stats){
-                                                    kills = stats.kills;
-                                                    deaths = stats.deaths;
-                                                    win = stats.win;
-                                                }
-                                            }
-                                        }
-
-                                        //Push record
-                                        summonerStats.matches.push({
-                                            'matchId': matchId,
-                                            'championId': championId,
-                                            'kills': kills,
-                                            'deaths': deaths,
-                                            'win': win
-                                        });
-                                    }
+                                for(var i = 0; i < leagueEntriesSet.length; i += 1) {
+                                    //console.log(leagueEntriesSet[i]);
+                                    summonerStats.leagueEntryList.push({
+                                        'leagueId': leagueEntriesSet[i].leagueId,
+                                        'queueType': leagueEntriesSet[i].queueType,
+                                        'wins': leagueEntriesSet[i].wins,
+                                        'loss': leagueEntriesSet[i].losses,
+                                        'hotStreak': leagueEntriesSet[i].hotStreak,
+                                        'tier': leagueEntriesSet[i].tier,
+                                        'rank': leagueEntriesSet[i].rank,
+                                        'leaguePoints': leagueEntriesSet[i].leaguePoints
+                                    });
                                 }
-                            );
-                        }
-                    }
-                ), 
-                function(error) {
-                    console.log(err);
-                };
-                */
+                                //Send object with gathered/ compiled summoner data to Frontend
+                                //console.log(summonerStats);
+                                res.send(summonerStats);
+                                
+                                /* Uncomment, fix bugs, implement how to chain the multiple match api and delete the send above if we need match data
+                                //Not sure how to get win/loss for each champion again?
+                                //After thinking, I guess it is from calling matchlist then individual matches (but rate limit on individual matches per 10 secs...)
+                                //This function gets a list of matches, each with a matchId, a championId, kills, deaths, win(True/False)
+                                getMatchList(apiRequest, summonerObj.accountId).then(
+                                    function(matchList) {
+                                        summonerStats.matches = [];
+                                        for(var matchId in matchList){
+                                            getMatch(apiRequest, matchId).then(
+                                                function(match) {
+                                                    var participantId = null;
+                                                    //participantIdentityDTO, get the participantId of the summoner for the match
+                                                    for(participant in match.participantIdentities) {
+                                                        if(participant.player.summonerId === summonerObj.id) {
+                                                            participantId = participant.participantId;
+                                                        }
+                                                    }
 
-                //Send object with gathered/ compiled summoner data to Frontend
-                res.send(summonerStats);
-            }
-        ), function(err) {
-            console.log(err);
-        };
+                                                    if(participantId !== null)
+                                                    {
+                                                        var championId = -1;
+                                                        var kills = -1;
+                                                        var deaths = -1;
+                                                        var win = null
+                                                        //participantDTO, get the championId, win(True/ False) and k/d
+                                                        for(player in match.participants) {
+                                                            if(participantId === player.participantId) {
+                                                                championId = player.championId;
+                                                                for(stats in player.stats){
+                                                                    kills = stats.kills;
+                                                                    deaths = stats.deaths;
+                                                                    win = stats.win;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        //Push record
+                                                        summonerStats.matches.push({
+                                                            'matchId': matchId,
+                                                            'championId': championId,
+                                                            'kills': kills,
+                                                            'deaths': deaths,
+                                                            'win': win
+                                                        });
+                                                    }
+                                                }
+                                            );
+                                        },
+                                        function(error) {   //matches
+                                            console.log(err);
+                                        });
+                                        console.log(summonerStats);
+                                        res.send(summonerStats);
+                                    }, 
+                                function(err) { //match list
+                                    console.log(err);
+                                });
+                                */
+                            }, 
+                        function(error) {   //get League Entries
+                            console.log(err);
+                        });
+                    }, 
+                    function(error) {   //get Champion Mastery
+                        console.log(err);
+                });
+            }, function(err) {  //get Summoner 
+                console.log(err);
+            });
     }
     else
     {
@@ -303,7 +350,8 @@ var getSummonerByName = function(apiBaseURI, summonerName) {
 // Win streak
 var getLeagueEntries = function (apiBaseURI, summonerId) {
     console.log("executing getLeagueEntries");
-    var reqURI = apiBaseURI + "league/v4/entries/by-summoner/" + summonerId  + "?api_key=" + APIKEY;
+    var reqURI = apiBaseURI + "league/v4/entries/by-summoner/" + summonerId  + "?api_key=";
+    console.log(reqURI);
 
     var options = {
         url: reqURI + APIKEY,
@@ -330,7 +378,8 @@ var getLeagueEntries = function (apiBaseURI, summonerId) {
 // Champion Mastery
 var getChampionMastery = function(apiBaseURI, summonerId) {
     console.log("executing getChampionMastery");
-    var reqURI = apiBaseURI + "champion-mastery/v4/champion-masteries/by-summoner/" + summonerId  + "?api_key=" + APIKEY;
+    var reqURI = apiBaseURI + "champion-mastery/v4/champion-masteries/by-summoner/" + summonerId  + "?api_key=";
+    console.log(reqURI);
 
     var options = {
         url: reqURI + APIKEY,
