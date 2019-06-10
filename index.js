@@ -192,6 +192,12 @@ app.post('/submit', (req, res) => {
         getSummonerByName(apiRequest, req.body.summoner).then(
             function(summonerObj) {
                 console.log("Received: " + JSON.stringify(summonerObj));
+                //console.log(summonerObj.status.status_code);
+                if(summonerObj.status && summonerObj.status.status_code >= 400)
+                {
+                    return res.status(summonerObj.status.status_code).json({ error: summonerObj.status.message });
+                }
+
                 summonerStats['summonerName'] = summonerObj.name;
                 summonerStats['SummonerLevel'] = summonerObj.summonerLevel;  //For display
                 summonerStats['summonerId'] = summonerObj.id;                //Encrypted, for other API call
@@ -294,16 +300,16 @@ app.post('/submit', (req, res) => {
                             }, 
                         function(error) {   //get League Entries
                             console.log(err);
-                            return res.status(400).json(err);
+                            return res.status(400).json({ error: 'Bad Request (league entry api)'});
                         });
                     }, 
                     function(error) {   //get Champion Mastery
                         console.log(err);
-                        return res.status(400).json(err);
+                        return res.status(400).json({ error: 'Bad Request (champion mastery api)'});
                 });
             }, function(err) {  //get Summoner 
                 console.log(err);
-                return res.status(400).json(err);
+                return res.status(400).json({ error: 'Bad Request/ Summoner Does not exist'});
             });
     }
     else
